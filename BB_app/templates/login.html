@@ -1,0 +1,70 @@
+{% extends 'master.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <!-- 🟦 Login Box (on top) -->
+    <div class="login-container">
+        <h2>Login</h2>
+
+        <!-- Error message -->
+        {% if error %}
+            <p id="errorMsg" style="color:red;">{{ error }}</p>
+        {% endif %}
+
+        <form method="post" id="loginForm">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Log In</button>
+        </form>
+
+        <!-- Hidden forgot password form -->
+        <form method="post" action="{% url 'forgot_password' %}" id="forgotForm" style="display:none;">
+            {% csrf_token %}
+            <input type="hidden" name="username" id="forgot_username">
+        </form>
+
+        <p><a href="#" id="forgotLink" class="forgot-link">Forgot Password?</a></p>
+        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+        <p><a href="{% url 'home' %}">← Back to Home</a></p>
+    </div>
+
+    <!-- 🟩 Admin Credentials Box (below the login box) -->
+    <div class="admin-box">
+        <h3>Admin Login Details</h3>
+        <p><strong>Username:</strong> {{ admin_username }}</p>
+        <p><strong>Password:</strong> {{ admin_password }}</p>
+    </div>
+</div>
+
+<script>
+    const loginUsername = document.querySelector('input[name="username"]');
+    const forgotUsername = document.getElementById('forgot_username');
+    const forgotForm = document.getElementById('forgotForm');
+    const forgotLink = document.getElementById('forgotLink');
+    const errorMsg = document.getElementById('errorMsg');
+
+    // Handle "Forgot Password?" link
+    forgotLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const usernameValue = loginUsername.value.trim();
+
+        if (!usernameValue) {
+            alert("Please enter your username first.");
+            return;
+        }
+
+        forgotUsername.value = usernameValue;
+        forgotForm.submit();
+    });
+
+    // Auto-clear error message
+    loginUsername.addEventListener('input', () => {
+        if (errorMsg) {
+            errorMsg.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}
+
+

@@ -1,0 +1,29 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Patient{% endblock %}
+
+{% block content %}
+
+<section class="blood-form-page">
+  <div class="blood-form-container">
+    <h2>🩸 Patient Blood Request Form</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color: red;">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+
+      {% if form.errors %}
+        <div style="color: red;">{{ form.errors }}</div>
+      {% endif %}
+
+      {{ form.as_p }}
+      <button type="submit">Request Blood</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

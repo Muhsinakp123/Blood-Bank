@@ -1,0 +1,127 @@
+{% extends "master.html" %}
+{% load static %}
+{% block title %}{% endblock %}
+{% block content %}
+<div class="hospital-dashboard">
+
+  <!-- Header with Welcome and Logo Dropdown -->
+  <div class="dashboard-header">
+    <div class="welcome-text">
+      <h2>Welcome, {{ hospital.hospital_name }}</h2>
+      <p>Manage your blood stock and requests efficiently.</p>
+    </div>
+
+    <div class="dropdown">
+      {% if hospital.Hospital_Logo %}
+      <img src="{{ hospital.Hospital_Logo.url }}" alt="Hospital Logo" class="hospital-logo" id="logoDropdown"
+        onclick="toggleDropdown()" />
+      {% else %}
+      <img src="{% static 'images/default_logo.png' %}" alt="Default Logo" class="hospital-logo" id="logoDropdown"
+        onclick="toggleDropdown()" />
+      {% endif %}
+
+      <ul class="custom-dropdown shadow" id="dropdownMenu">
+        <li><a href="{% url 'hospital_profile_view' %}"><i class="fas fa-user me-2"></i> Profile</a></li>
+        <li>
+          <hr>
+        </li>
+        <li><a href="#" class="text-danger" onclick="confirmLogout(event)">
+            <i class="fas fa-sign-out-alt me-2"></i> Logout
+          </a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Dashboard Action Cards -->
+
+  <div class="hospital-cards">
+    <a href="{% url 'add_stock' %}" class="hosp-card">
+      <i class="fas fa-plus-circle"></i>
+      <h4>Add Stock</h4>
+      <p>Update your inventory with new blood units.</p>
+    </a>
+
+
+    <a href="{% url 'hospital_stock' %}" class="hosp-card">
+      <i class="fas fa-chart-line"></i>
+      <h4>View Stock</h4>
+      <p>Check your current blood stock levels.</p>
+    </a>
+
+
+    <a href="{% url 'request_blood' %}" class="hosp-card">
+      <i class="fas fa-hand-holding-droplet"></i>
+      <h4>Request Blood</h4>
+      <p>Send a blood request to the blood bank.</p>
+    </a>
+
+    <a href="{% url 'view_request' %}" class="hosp-card">
+      <i class="fas fa-clipboard-list"></i>
+      <h4>View Requests</h4>
+      <p>Track and manage your previous requests.</p>
+    </a>
+
+    <a href="{% url 'blood_camp' %}" class="hosp-card">
+      <i class="fas fa-hand-holding-heart"></i>
+      <h4>Donation Camps</h4>
+      <p>Organize and manage blood donation events.</p>
+    </a>
+
+    <a href="{% url 'generate_report' %}" class="hosp-card">
+      <i class="fas fa-file-alt"></i>
+      <h4>Generate Report</h4>
+      <p>View donation history and donor-patient records.</p>
+    </a>
+
+
+  </div>
+
+  <div class="notification-module">
+    <h3><i class="fas fa-bell"></i> Notifications</h3>
+    <p>Stay updated with important alerts and reminders.</p>
+
+    {% if notifications %}
+    <div class="notification-list">
+      {% for n in notifications %}
+      <div class="notification-item {% if not n.is_read %}unread{% endif %}">
+        <i class="fas fa-circle"></i>
+        <div>
+          <h4>{{ n.title }}</h4>
+          <p>{{ n.message }}</p>
+          <small>{{ n.created_at|date:"M d, Y h:i A" }}</small>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>No notifications yet.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+</div>
+
+<script>
+  function toggleDropdown() {
+    const dropdown = document.getElementById("dropdownMenu");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
+
+  // Hide dropdown when clicking outside
+  document.addEventListener("click", function (event) {
+    const dropdown = document.getElementById("dropdownMenu");
+    const logo = document.getElementById("logoDropdown");
+    if (!logo.contains(event.target) && !dropdown.contains(event.target)) {
+      dropdown.style.display = "none";
+    }
+  });
+
+  function confirmLogout(event) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to logout?")) {
+      window.location.href = "{% url 'logout' %}";
+    }
+  }
+</script>
+{% endblock %}

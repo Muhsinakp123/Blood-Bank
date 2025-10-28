@@ -1,0 +1,114 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<header>
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo">PulsePoint</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Home</a></li>
+                <li><a href="{% url 'home' %}#about">About</a></li>
+                <li><a href="{% url 'home' %}#services">Services</a></li>
+
+                <li><a href="{% url 'help' %}">Help/Support</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                <li><a href="{% url 'login' %}" class="login-btn">Login</a></li>
+            </ul>
+            <div class="menu-toggle" id="menuToggle">&#9776;</div>
+        </nav>
+    </div>
+</header>
+<section id="main-sec">
+    <div class="breadcrumps-area">
+        <img src="{% static 'images/contact.jpg' %}" alt="contact">
+        <div class="contact-us">
+            <h1>Contact Us</h1>
+        </div>
+    </div>
+</section>
+
+<section id="need-help" class="fade-section">
+    <div class="need-help container">
+        <!-- Left Column: Contact Info -->
+        <div class="left-column">
+            <div class="item">
+                <div class="icon"><i class="fa fa-map-marker"></i></div>
+                <div class="info">
+                    <h4>Location</h4>
+                    <p>Vadakara, Calicut, Kerala</p>
+                </div>
+            </div>
+            <div class="item">
+                <div class="icon"><i class="fa fa-phone"></i></div>
+                <div class="info">
+                    <h4>Make a call</h4>
+                    <p>+91 98765 43210</p>
+                </div>
+            </div>
+            <div class="item">
+                <div class="icon"><i class="fa fa-envelope-open"></i></div>
+                <div class="info">
+                    <h4>Send a Mail</h4>
+                    <p>support@lifelink.org</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Contact Form -->
+        <div class="right-column">
+            <h5>NEED HELP?</h5>
+            <h2>Keep in Touch</h2>
+            <div class="form">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <div class="input-group">
+                        {{ form.name.errors }}
+                        {{ form.name }}
+                    </div>
+
+                    <div class="input-group">
+                        {{ form.email.errors }}
+                        {{ form.email }}
+                    </div>
+
+                    <div class="input-group">
+                        {{ form.phone.errors }}
+                        {{ form.phone }}
+                    </div>
+
+                    <div class="input-group">
+                        {{ form.message.errors }}
+                        {{ form.message }}
+                    </div>
+
+                    <button type="submit" class="send-btn">Send Message <i class="fa fa-paper-plane"></i></button>
+
+                </form>
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map">
+    <div class="responsive-map">
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2822.7806761080233!2d-93.29138368446431!3d44.96844997909819!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x52b32b6ee2c87c91%3A0xc20dff2748d2bd92!2sWalker+Art+Center!5e0!3m2!1sen!2sus!4v1514524647889"
+            allowfullscreen="" loading="lazy"></iframe>
+    </div>
+</section>
+{% endblock %}

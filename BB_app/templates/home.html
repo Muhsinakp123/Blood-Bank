@@ -1,0 +1,150 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- Navbar -->
+<header>
+    <div class="container">
+    <nav class="navbar">
+        <div class="logo">PulsePoint</div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="{% url 'help' %}">Help/Support</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            <li><a href="{% url 'login' %}" class="login-btn">Login</a></li>
+        </ul>
+        <div class="menu-toggle" id="menuToggle">&#9776;</div>
+    </nav>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container hero-content fade-in">
+    <img src="{% static 'images/banner.png' %}" alt="banner" class="hero-banner"/>
+    <h1 class="hero-heading">Where Blood Flows, Hope Awakens</h1>
+    <p class="hero-subtext">One small act, one precious drop, can weave a new story of survival</p>
+    <a href="{% url 'signup' %}"><button class="btn" id="donateBtn">Register Now</a></button>
+  </div>
+</section>
+
+
+
+<!-- Main Section -->
+<main>
+<!-- About Section -->
+<section id="about" class="about fade-in">
+  <div class="container about-container">
+    <!-- Left: Content -->
+    <div class="about-content">
+      <h2>About Us</h2>
+      <p>
+        PulsePoint is a digital platform connecting donors, patients, and hospitals.
+        We aim to simplify the process of blood donation and requests, ensuring
+        that every drop counts and reaches those who need it most.
+      </p>
+      <p>
+        Our mission is to create a seamless, trustworthy, and accessible ecosystem 
+        for blood donation. We believe that saving lives should be simple, quick, 
+        and efficient, and we strive to bridge the gap between those willing to help 
+        and those in urgent need.
+      </p>
+      <p>
+        PulsePoint empowers donors by providing timely notifications about blood 
+        requirements in nearby hospitals and communities. For patients and hospitals, 
+        our platform ensures that critical blood needs are met promptly, reducing 
+        delays and improving patient outcomes.
+      </p>
+      <p>
+        Guided by values of compassion, transparency, and community service, we 
+        are committed to making blood donation more than just an act – we aim to 
+        make it a life-saving movement. Join us in our mission and become a 
+        part of a caring network that touches countless lives every day.
+      </p>
+    </div>
+
+    <!-- Right: Image -->
+    <div class="about-image">
+      <img src="{% static 'images/about.png' %}" alt="about">
+    </div>
+  </div>
+</section>
+
+    <!-- Services Section -->
+    <section id="services" class="services fade-in">
+        <div class="container">
+        <h2>Our Services</h2>
+        <div class="service-cards">
+            <div class="card">
+                <img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" alt="Donor">
+                <h3>Donor Registration</h3>
+                <p>Register as a donor and help save lives by donating blood safely and regularly.</p>
+            </div>
+            <div class="card">
+                <img src="https://cdn-icons-png.flaticon.com/512/3194/3194593.png" alt="Request">
+                <h3>Blood Requests</h3>
+                <p>Patients can request the required blood type and connect with nearby hospitals.</p>
+            </div>
+            <div class="card">
+                <img src="https://cdn-icons-png.flaticon.com/512/2966/2966335.png" alt="Hospital">
+                <h3>Hospital Partnership</h3>
+                <p>Hospitals can manage their blood stock and fulfill patient needs efficiently.</p>
+            </div>
+            <div class="card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Awareness">
+                <h3>Awareness Programs</h3>
+                <p>We organize blood donation camps and awareness drives for communities.</p>
+            </div>
+             <div class="card">
+            <img src="https://cdn-icons-png.flaticon.com/512/360/360736.png" alt="Emergency Alerts">
+            <h3>Emergency Alerts</h3>
+            <p>Receive instant notifications for urgent blood requirements in your area, helping save lives in critical situations.</p>
+        </div>
+        <div class="card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2910/2910768.png" alt="Blood Donation Tracking">
+            <h3>Donation Tracking</h3>
+            <p>Track your donation history, view your impact, and receive personalized suggestions for future donations.</p>
+        </div>
+        <div class="card">
+            <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="Health Tips">
+            <h3>Health Tips</h3>
+            <p>Access health and wellness tips for donors to maintain their well-being before and after blood donation.</p>
+        </div>
+        <div class="card">
+            <img src="https://cdn-icons-png.flaticon.com/512/4283/4283871.png" alt="Community Support">
+            <h3>Community Support</h3>
+            <p>Join a network of donors, volunteers, and hospitals to collaborate on blood donation campaigns and social initiatives.</p>
+        </div>
+        </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer id="contact">
+    <div class="container footer-content">
+        <div class="footer-left">
+            <h3>PulsePoint</h3>
+            <p>Connecting lives through blood donation.</p>
+        </div>
+        <div class="footer-right">
+            <p><strong>Email:</strong> support@lifelink.org</p>
+            <p><strong>Phone:</strong> +91 98765 43210</p>
+            <div class="socials">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+    <p class="footer-bottom">© 2025 PulsePoint | All Rights Reserved</p>
+</footer>
+
+<!-- Scroll to Top Button -->
+<button id="scrollTopBtn">↑</button>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'master.html' %}
+{% block title %}Hospital Profile{% endblock %}
+{% block content %}
+<h3>Hospital Profile</h3>
+<form method="POST">{% csrf_token %}
+  <label>Hospital Name</label>
+  <input type="text" name="hospital_name" class="form-control" value="{{ hospital.hospital_name }}">
+  <label>Location</label>
+  <textarea name="location" class="form-control">{{ hospital.location }}</textarea>
+  <label>Contact</label>
+  <input type="text" name="contact" class="form-control" value="{{ hospital.contact }}">
+  <label>Email</label>
+  <input type="email" name="email" class="form-control" value="{{ hospital.email }}">
+  <br>
+  <button type="submit" class="btn btn-primary">Update</button>
+  <a href="{% url 'hospital_profile_delete' %}" class="btn btn-danger">Delete Profile</a>
+</form>
+{% endblock %}

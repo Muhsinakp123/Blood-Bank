@@ -1,0 +1,18 @@
+{% extends 'master.html' %}
+{% block title %}Hospital Stock{% endblock %}
+{% block content %}
+<h3>Blood Stock Overview</h3>
+<canvas id="stockChart"></canvas>
+
+<table class="table mt-4">
+    <thead><tr><th>Blood Group</th><th>Units</th></tr></thead>
+    <tbody>
+        {% for stock in blood_stocks %}
+        <tr><td>{{ stock.blood_group }}</td><td>{{ stock.units_available }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary mt-3">Back</a>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Hospital{% endblock %}
+
+{% block content %}
+<section class="blood-form-page">
+  <div class="blood-form-container">
+    <h2>🏥 Hospital Details & Blood Inventory</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Submit Details</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

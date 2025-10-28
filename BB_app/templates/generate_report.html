@@ -1,0 +1,43 @@
+{% extends "master.html" %}
+{% block content %}
+<div class="report-dashboard">
+  <h2>Blood Donation Report</h2>
+  <p>Summary of donations linking donors and patients.</p>
+
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th>Donor Name</th>
+        <th>Patient Name</th>
+        <th>Blood Group</th>
+        <th>Units Donated</th>
+        <th>Date</th>
+        <th>Hospital</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in donations %}
+      <tr>
+        <td>{{ d.donor.name }}</td>
+        <td>{{ d.patient.name }}</td>
+        <td>{{ d.blood_group }}</td>
+        <td>{{ d.units }}</td>
+        <td>{{ d.date_donated|date:"d M Y" }}</td>
+        <td>{{ d.hospital.hospital_name }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" style="text-align:center;">No donation records found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+    <!-- Back Button -->
+  <div class="back-btn-container">
+    <a href="{% url 'hospital_dashboard' %}" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Donor{% endblock %}
+
+{% block content %}
+<section class="blood-form-page">
+  <div class="blood-form-container">
+    <h2>❤️ Donor Details Form</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Donate Now</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

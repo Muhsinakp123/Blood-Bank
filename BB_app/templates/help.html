@@ -1,0 +1,135 @@
+{% extends 'master.html' %}
+
+{% block title %}Help/Support{% endblock %}
+
+{% block content %}
+<div class="help-page">
+    <!-- Navbar -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">PulsePoint</div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'home' %}#about">About</a></li>
+                    <li><a href="{% url 'home' %}#services">Services</a></li>
+
+                    <li><a href="{% url 'help' %}">Help/Support</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                    <li><a href="{% url 'login' %}" class="login-btn">Login</a></li>
+                </ul>
+                <div class="menu-toggle" id="menuToggle">&#9776;</div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Help Section -->
+    <section id="help" class="help fade-in">
+        <div class="help-container">
+            <h2>Help & Support</h2>
+            <p>
+                Welcome to the Help & Support Center! Whether you are a donor, patient, or hospital staff, we are here
+                to guide
+                you. Our platform ensures safe and easy blood donation and request management. Browse the sections below
+                to get
+                assistance.
+            </p>
+
+            <!-- Support Cards -->
+            <div class="support-options">
+                <div class="support-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1827/1827272.png" alt="FAQ">
+                    <h3>FAQs</h3>
+                    <p>Find answers to commonly asked questions about eligibility, donation frequency, and preparation
+                        before
+                        donating blood.</p>
+                </div>
+
+                <div class="support-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/906/906343.png" alt="Email Support">
+                    <h3>Email Support</h3>
+                    <p>Contact our support team at <a href="mailto:support@lifelink.org">support@lifelink.org</a>.
+                        Expect
+                        responses within 24 hours.</p>
+                </div>
+
+                <div class="support-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5977/5977575.png" alt="Chat">
+                    <h3>Live Chat</h3>
+                    <p>Chat with our support staff for real-time assistance on donor registration, blood requests, and
+                        hospital
+                        coordination.</p>
+                </div>
+            </div>
+
+            <!-- Step-by-Step Guides -->
+            <div class="guides">
+                <h3>Step-by-Step Guides</h3>
+                <h4>For Donors:</h4>
+                <ol>
+                    <li>Register on the platform with your details.</li>
+                    <li>Check upcoming donation camps or nearby hospitals.</li>
+                    <li>Schedule your donation appointment.</li>
+                    <li>Follow pre-donation and post-donation guidelines.</li>
+                </ol>
+
+                <h4>For Patients:</h4>
+                <ol>
+                    <li>Create a request specifying blood group, quantity, and urgency.</li>
+                    <li>Connect with nearby donors or hospitals.</li>
+                    <li>Track response and confirm availability.</li>
+                </ol>
+
+                <h4>For Hospitals:</h4>
+                <ol>
+                    <li>Register your hospital and blood bank.</li>
+                    <li>Update blood stock regularly.</li>
+                    <li>Respond to patient requests and notify donors if needed.</li>
+                </ol>
+            </div>
+
+            <!-- Common Issues & Solutions -->
+            <div class="issues">
+                <h3>Common Issues & Solutions</h3>
+                <ul>
+                    <li><strong>Unable to register:</strong> Check that all fields are filled and email is valid.</li>
+                    <li><strong>Cannot find donors:</strong> Verify location settings and blood group selection.</li>
+                    <li><strong>Hospital not responding:</strong> Contact support via email or live chat.</li>
+                    <li><strong>Login issues:</strong> Use password recovery or contact support.</li>
+                </ul>
+            </div>
+
+            <!-- Emergency Contacts & Resources -->
+            <div class="emergency">
+                <h3>Emergency Contacts & Blood Bank Resources</h3>
+                <p>In case of urgent blood requirements, reach out to the following:</p>
+                <ul>
+                    <li>Red Cross Helpline: <strong>+91 12345 67890</strong></li>
+                    <li>Local Blood Banks: Visit <a href="https://www.naco.gov.in/" target="_blank">NACO India</a></li>
+                    <li>Hospital Emergency Departments for immediate needs.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="help-footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <h3>PulsePoint</h3>
+                <p>Connecting lives through blood donation.</p>
+            </div>
+            <div class="footer-right">
+                <p><strong>Email:</strong> support@lifelink.org</p>
+                <p><strong>Phone:</strong> +91 98765 43210</p>
+                <div class="socials">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <p class="footer-bottom">© 2025 PulsePoint | All Rights Reserved</p>
+    </footer>
+</div>
+{% endblock %}

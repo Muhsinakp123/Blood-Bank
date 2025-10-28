@@ -1,0 +1,187 @@
+/* -------------------------------
+   Login / Signup / Reset Password Forms
+--------------------------------*/
+
+/* Common container */
+.login-container,
+.signup-container,
+.reset-container {
+    max-width: 500px;
+    margin: 50px auto 50px; /* space from navbar */
+    padding: 40px 30px;
+    background-color: #fff5f5; /* light red theme */
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align: center;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Headings */
+.login-container h2,
+.signup-container h2,
+.reset-container h2 {
+    color: #b30000;
+    margin-bottom: 25px;
+    font-size: 2rem;
+}
+
+/* Input fields */
+.login-container input,
+.signup-container input,
+.reset-container input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #b30000;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.login-container input:focus,
+.signup-container input:focus,
+.reset-container input:focus {
+    border-color: #8c0000;
+    box-shadow: 0 0 5px rgba(179,0,0,0.5);
+}
+
+/* Buttons */
+.login-container button,
+.signup-container button,
+.reset-container button {
+    width: 70%;
+    background-color: #b30000;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
+}
+
+.login-container button:hover,
+.signup-container button:hover,
+.reset-container button:hover {
+    background-color: #8c0000;
+    transform: translateY(-2px);
+}
+
+/* Links */
+.login-container a,
+.signup-container a,
+.reset-container a {
+    color: #b30000;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.login-container a:hover,
+.signup-container a:hover,
+.reset-container a:hover {
+    text-decoration: underline;
+}
+
+/* Labels left-aligned */
+.login-container label,
+.signup-container label,
+.reset-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #8c0000;
+}
+
+/* Form fields wrapper to ensure spacing */
+.login-container .form-field,
+.signup-container .form-field,
+.reset-container .form-field {
+    text-align: left;
+}
+
+/* Role field like normal inputs: label on top, dropdown below */
+.signup-container .form-field.role-field {
+    display: block; /* remove flex */
+    text-align: left; /* ensure label is left-aligned */
+    margin-bottom: 20px; /* same spacing as other fields */
+}
+
+.signup-container .form-field.role-field label {
+    display: block;
+    margin-bottom: 5px; /* spacing between label and dropdown */
+}
+
+.signup-container .form-field.role-field select {
+    width: 100%; /* full width like other inputs */
+    padding: 12px 15px;
+    border: 1px solid #b30000;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff5f5;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.signup-container .form-field.role-field select:focus {
+    border-color: #8c0000;
+    box-shadow: 0 0 5px rgba(179,0,0,0.5);
+}
+
+
+
+
+/* Error / Success messages */
+#errorMsg {
+    color: #d00000;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+#successMsg {
+    color: #2e7d32;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Admin Box (optional on login page) */
+.admin-box {
+    max-width: 400px;
+    margin: 20px auto 50px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.admin-box h3 {
+    color: #b30000;
+    margin-bottom: 10px;
+}
+
+.admin-box p {
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    .login-container,
+    .signup-container,
+    .reset-container,
+    .admin-box {
+        margin: 50px 20px;
+        padding: 30px 20px;
+    }
+
+    .login-container h2,
+    .signup-container h2,
+    .reset-container h2 {
+        font-size: 1.5rem;
+    }
+}

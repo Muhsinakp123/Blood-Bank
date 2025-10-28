@@ -1,0 +1,10 @@
+{% extends 'master.html' %}
+{% block title %}Hospital Add Stock{% endblock %}
+{% block content %}
+<h3>Add Blood Stock</h3>
+<form method="POST">{% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Add</button>
+  <a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

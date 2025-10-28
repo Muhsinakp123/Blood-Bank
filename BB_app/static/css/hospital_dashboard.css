@@ -1,0 +1,296 @@
+.hospital-dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px 50px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
+  width: 120%;
+  margin-left: -10%;
+  border-top: 4px solid #b30000;
+}
+
+.custom-dropdown {
+  position: absolute;
+  left: 20px;
+  display: none;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  min-width: 160px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  padding: 10px 0;
+  z-index: 100;
+}
+
+
+.welcome-text h2 {
+  color: #b30000;
+  font-weight: 600;
+  margin: 0;
+}
+
+.welcome-text p {
+  color: #555;
+  margin: 5px 0 0;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.hospital-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #b30000;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.hospital-logo:hover {
+  transform: scale(1.05);
+}
+
+
+.custom-dropdown li {
+  list-style: none;
+}
+
+.custom-dropdown a {
+  display: block;
+  padding: 10px 20px;
+  color: #b30000;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.custom-dropdown a:hover {
+  background-color: #b30000;
+  color: #fff;
+}
+
+.custom-dropdown hr {
+  margin: 5px 0;
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+
+
+/* Card Section - 2x2 Grid */
+.hospital-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 50px;
+  justify-items: center;
+  align-items: center;
+}
+
+.hosp-card {
+  background: #fff;
+  border: 2px solid #b30000;
+  border-radius: 15px;
+  padding: 25px 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #b30000;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  width: 90%;
+  max-width: 350px;
+}
+
+.hosp-card:hover {
+  background: #b30000;
+  color: #fff;
+  transform: translateY(-5px);
+}
+
+.hosp-card i {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.hosp-card h4 {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.hosp-card p {
+  font-size: 14px;
+  margin: 0;
+}
+
+
+/* Notification Module */
+.notification-module {
+  margin-top: 60px;
+  background: #fff;
+  border: 2px solid #b30000;
+  border-radius: 15px;
+  padding: 30px 40px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  text-align: left;
+}
+
+.notification-module h3 {
+  color: #b30000;
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-module p {
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notification-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #fff3f3;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  transition: background 0.3s;
+}
+
+.notification-item.unread {
+  background: #ffe0e0;
+}
+
+.notification-item:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.notification-item:hover p,
+.notification-item:hover h4,
+.notification-item:hover small {
+  color: white;
+}
+
+.report-dashboard {
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin: 40px auto;
+  max-width: 1000px;
+}
+
+.report-dashboard h2 {
+  color: #b30000;
+  margin-bottom: 10px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.report-table th, .report-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.report-table th {
+  background: #b30000;
+  color: #fff;
+}
+
+.report-table tr:hover {
+  background: #f9f9f9;
+}
+
+.camp-dashboard {
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin: 40px auto;
+  max-width: 1000px;
+}
+
+.camp-dashboard h2 {
+  color: #b30000;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.camp-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.feature {
+  background: #fff;
+  border: 2px solid #b30000;
+  border-radius: 15px;
+  padding: 25px 20px;
+  text-align: center;
+  color: #b30000;
+  transition: all 0.3s ease;
+}
+
+.feature:hover {
+  background: #b30000;
+  color: #fff;
+  transform: translateY(-5px);
+}
+
+/* Back Button Styling */
+.back-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #b30000;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 12px;
+}
+
+.back-btn:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+.back-btn i {
+  font-size: 14px;
+}
