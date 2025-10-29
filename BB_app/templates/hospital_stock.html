@@ -1,18 +1,36 @@
 {% extends 'master.html' %}
 {% block title %}Hospital Stock{% endblock %}
+
 {% block content %}
-<h3>Blood Stock Overview</h3>
-<canvas id="stockChart"></canvas>
+<div class="container py-4">
+  <h2 class="mb-4 text-center">🩸 Blood Stock Overview</h2>
 
-<table class="table mt-4">
-    <thead><tr><th>Blood Group</th><th>Units</th></tr></thead>
+  <div class="text-center mb-4">
+    {% if chart_image %}
+      <img src="data:image/png;base64,{{ chart_image }}" alt="Blood Stock Pie Chart" class="img-fluid shadow rounded" style="max-width: 400px;">
+    {% else %}
+      <p>No data available to display chart.</p>
+    {% endif %}
+  </div>
+
+  <table class="table table-bordered table-striped text-center">
+    <thead class="table-dark">
+      <tr><th>Blood Group</th><th>Units Available</th></tr>
+    </thead>
     <tbody>
-        {% for stock in blood_stocks %}
-        <tr><td>{{ stock.blood_group }}</td><td>{{ stock.units_available }}</td></tr>
-        {% endfor %}
+      {% for stock in blood_stocks %}
+        <tr>
+          <td>{{ stock.blood_group }}</td>
+          <td>{{ stock.units_available }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="2">No blood stock available.</td></tr>
+      {% endfor %}
     </tbody>
-</table>
+  </table>
 
-<a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary mt-3">Back</a>
-
+  <div class="text-center mt-4">
+    <a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary px-4">← Back to Dashboard</a>
+  </div>
+</div>
 {% endblock %}

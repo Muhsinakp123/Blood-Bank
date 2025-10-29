@@ -8,6 +8,10 @@ from django.contrib.auth.models import User
 from .models import HospitalProfile, BloodStock, BloodRequest,BloodDonation,Notification
 from .forms import BloodStockForm, BloodRequestForm
 
+import io
+import base64
+from matplotlib import pyplot as plt
+
 # --- Home Page ---
 def home(request):
     return render(request, 'home.html')
@@ -189,11 +193,23 @@ def hospital_stock(request):
     labels = [stock.blood_group for stock in blood_stocks]
     values = [stock.units_available for stock in blood_stocks]
 
+    # --- Generate Pie Chart using Matplotlib ---
+    fig, ax = plt.subplots(figsize=(5, 5))
+    ax.pie(values, labels=labels, autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')  # Makes the pie chart a perfect circle
+    ax.set_title('Blood Stock Distribution')
+
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    chart_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    plt.close(fig)
+
     return render(request, 'hospital_stock.html', {
         'hospital': hospital,
-        'labels': labels,
-        'values': values,
-        'blood_stocks': blood_stocks
+        'blood_stocks': blood_stocks,
+        'chart_image': chart_image
     })
 
 
