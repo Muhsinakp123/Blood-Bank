@@ -294,3 +294,228 @@
 .back-btn i {
   font-size: 14px;
 }
+
+
+/* ======================================
+   HOSPITAL PROFILE PAGE 
+====================================== */
+.hospital-profile {
+  min-height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 20px;
+  animation: fadeIn 1s ease-in;
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(14px);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(180, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  transition: all 0.3s ease;
+  border-top: 5px solid #b30000;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 40px rgba(179, 0, 0, 0.25);
+}
+
+/* ---------- Header ---------- */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #b30000, #d32f2f);
+  color: white;
+  padding: 18px 25px;
+  border-radius: 14px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(179, 0, 0, 0.3);
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.7rem;
+  letter-spacing: 0.5px;
+}
+
+.profile-header .back-btn {
+  color: #fff;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.profile-header .back-btn:hover {
+  background: white;
+  color: #b30000;
+}
+
+/* ---------- Form Styling ---------- */
+.profile-form p {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.profile-form label {
+  font-weight: 600;
+  color: #7a0000;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.profile-form input,
+.profile-form select,
+.profile-form textarea {
+  padding: 12px 14px;
+  border: 1.5px solid #ffd6d6;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.profile-form input:focus,
+.profile-form select:focus,
+.profile-form textarea:focus {
+  border-color: #b30000;
+  box-shadow: 0 0 8px rgba(179, 0, 0, 0.3);
+  outline: none;
+}
+
+/* ---------- Buttons ---------- */
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 20px;
+}
+
+
+.btn-save {
+  flex: 1;
+  background: white;
+  border: 2px solid #b30000;
+  color: #b30000;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+}
+
+.btn-save:hover {
+  background: #b30000;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  flex: 1;
+  background: white;
+  border: 2px solid #b30000;
+  color: #b30000;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+}
+
+.btn-delete:hover {
+  background: #b30000;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .profile-card {
+    padding: 25px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+}
+
+
+.profile-form .back-btn {
+  display: block;
+  flex: 1;
+  margin: 30px auto 0 auto;  /* centers it horizontally */
+  background-color: #b30000;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(179, 0, 0, 0.2);
+  text-align: center;
+}
+
+.profile-form .back-btn:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+
+/* Hide the 'Clear' checkbox and label */
+input[type="checkbox"][name$="-clear"] {
+  display: none !important;
+}
+
+label[for$="-clear_id"] {
+  display: none !important;
+}
+/* Remove extra gap & colon from Django file input */
+.profile-form p {
+  margin-bottom: 10px;
+}
+
+.profile-form label::after {
+  content: "";
+}
+
+.profile-form br {
+  display: none;
+}
+
+/* Hide the extra colon Django adds */
+.profile-form label + br + a + br {
+  display: none;
+}

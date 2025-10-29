@@ -1,18 +1,28 @@
 {% extends 'master.html' %}
 {% block title %}Hospital Profile{% endblock %}
+
 {% block content %}
-<h3>Hospital Profile</h3>
-<form method="POST">{% csrf_token %}
-  <label>Hospital Name</label>
-  <input type="text" name="hospital_name" class="form-control" value="{{ hospital.hospital_name }}">
-  <label>Location</label>
-  <textarea name="location" class="form-control">{{ hospital.location }}</textarea>
-  <label>Contact</label>
-  <input type="text" name="contact" class="form-control" value="{{ hospital.contact }}">
-  <label>Email</label>
-  <input type="email" name="email" class="form-control" value="{{ hospital.email }}">
-  <br>
-  <button type="submit" class="btn btn-primary">Update</button>
-  <a href="{% url 'hospital_profile_delete' %}" class="btn btn-danger">Delete Profile</a>
-</form>
+<div class="hospital-profile container py-5">
+  <div class="profile-card">
+    <div class="profile-header">
+      <h2>🏥 Hospital Profile</h2>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="profile-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <div class="button-row">
+        <button type="submit" class="btn-save">💾 Update</button>
+        <a href="{% url 'hospital_profile_delete' %}" class="btn-delete" onclick="return confirmDelete();">🗑 Delete</a>
+      </div>
+      <a href="{% url 'hospital_dashboard' %}" class="back-btn">← Back to Dashboard</a>
+    </form>
+  </div>
+</div>
+<script>
+function confirmDelete() {
+  return confirm("⚠️ Are you sure you want to delete this hospital profile?");
+}
+</script>
 {% endblock %}

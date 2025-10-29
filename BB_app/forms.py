@@ -123,9 +123,20 @@ class HospitalForm(forms.ModelForm):
             'license_upload',
         ]
         widgets = {
-            'location': forms.Textarea(attrs={'rows':3}),
-            'requests': forms.Textarea(attrs={'rows':3}),
+            'location': forms.Textarea(attrs={'rows': 3}),
+            'requests': forms.Textarea(attrs={'rows': 3}),
+            'Hospital_Logo': forms.ClearableFileInput(),
+            'license_upload': forms.ClearableFileInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Remove "Clear" text from image/file fields
+        for field_name in ['Hospital_Logo', 'license_upload']:
+            field = self.fields[field_name]
+            field.widget.clear_checkbox_label = ''
+            field.widget.initial_text = 'Currently'
+            field.widget.input_text = ''  # removes "Change" text
 
 
 

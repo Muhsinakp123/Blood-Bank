@@ -249,14 +249,25 @@ def view_request(request):
 @login_required
 def hospital_profile_view(request):
     hospital = get_object_or_404(HospitalProfile, user=request.user)
+
     if request.method == 'POST':
-        hospital.hospital_name = request.POST.get('hospital_name')
-        hospital.location = request.POST.get('location')
-        hospital.contact = request.POST.get('contact')
-        hospital.email = request.POST.get('email')
-        hospital.save()
-        messages.success(request, "Profile updated successfully!")
-    return render(request, 'hospital_profile.html', {'hospital': hospital})
+        form = HospitalForm(request.POST, request.FILES, instance=hospital)
+        if form.is_valid():
+            # If license_upload not included, old one remains unchanged
+            form.save(commit=False)
+            form.instance.license_upload = hospital.license_upload  # preserve old file
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('hospital_dashboard')
+    else:
+        form = HospitalForm(instance=hospital)
+
+        # 👇 Optionally remove the field dynamically before rendering
+        if 'license_upload' in form.fields:
+            del form.fields['license_upload']
+
+    return render(request, 'hospital_profile.html', {'form': form})
+
 
 
 @login_required
