@@ -1,38 +1,52 @@
 {% extends 'master.html' %}
 {% block title %}Hospital View Request{% endblock %}
 {% block content %}
-<h3>Requested Blood History</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Patient Name</th>
-            <th>Blood Group</th>
-            <th>Units</th>
-            <th>Required Date</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for req in requests %}
-        <tr>
-            <td>{{ req.patient_name }}</td>
-            <td>{{ req.blood_group }}</td>
-            <td>{{ req.units_requested }}</td>
-            <td>{{ req.date_required }}</td>
-            <td>
-                {% if req.status == 'Approved' %}
-                    <span class="badge bg-success">{{ req.status }}</span>
-                {% elif req.status == 'Rejected' %}
-                    <span class="badge bg-danger">{{ req.status }}</span>
-                {% else %}
-                    <span class="badge bg-warning text-dark">{{ req.status }}</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="5">No requests yet.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary">Back</a>
+
+<div class="table-container">
+    <h3>🩸 Requested Blood History</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Blood Group</th>
+                <th>Units</th>
+                <th>Required Date</th>
+                <th>Emergency</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requests %}
+            <tr class="{% if req.is_emergency %}emergency-row{% endif %}">
+                <td>{{ req.patient_name }}</td>
+                <td>{{ req.blood_group }}</td>
+                <td>{{ req.units_requested }}</td>
+                <td>{{ req.date_required }}</td>
+                <td>
+                    {% if req.is_emergency %}
+                        <span class="emergency-label">Yes 🚨</span>
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+                <td>
+                    {% if req.status == 'Approved' %}
+                        <span class="badge bg-success">{{ req.status }}</span>
+                    {% elif req.status == 'Rejected' %}
+                        <span class="badge bg-danger">{{ req.status }}</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">{{ req.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No requests yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="text-align: center;">
+        <a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+
 {% endblock %}

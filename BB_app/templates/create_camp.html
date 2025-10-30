@@ -1,37 +1,41 @@
 {% extends "master.html" %}
+{% block title %}Create Blood Donation Camp{% endblock %}
 {% block content %}
-<div class="camp-dashboard container mt-5" style="max-width: 600px;">
-  <h2 class="text-center text-danger mb-4">Create Blood Donation Camp</h2>
+<div class="create-camp-page">
+  <div class="create-camp-card">
+    <h2>🩸 Create Blood Donation Camp</h2>
 
-  <form method="post">
-    {% csrf_token %}
-    <div class="form-group mb-3">
-      <label>Camp Name</label>
-      {{ form.camp_name }}
+    <form method="post" class="create-camp-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Camp Name</label>
+        {{ form.camp_name }}
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        {{ form.date }}
+      </div>
+      <div class="form-group">
+        <label>Venue</label>
+        {{ form.venue }}
+      </div>
+      <div class="form-group">
+        <label>Organizer</label>
+        {{ form.organizer }}
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        {{ form.description }}
+      </div>
+
+      <button type="submit" class="btn-submit">Create Camp</button>
+    </form>
+
+    <div class="back-btn-container">
+      <a href="{% url 'hospital_dashboard' %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
     </div>
-    <div class="form-group mb-3">
-      <label>Date</label>
-      {{ form.date }}
-    </div>
-    <div class="form-group mb-3">
-      <label>Venue</label>
-      {{ form.venue }}
-    </div>
-    <div class="form-group mb-3">
-      <label>Organizer</label>
-      {{ form.organizer }}
-    </div>
-    <div class="form-group mb-3">
-      <label>Description</label>
-      {{ form.description }}
-    </div>
-    <button type="submit" class="btn btn-danger w-100">Create Camp</button>
-  </form>
-  <!-- Back Button -->
-  <div class="back-btn-container">
-    <a href="{% url 'hospital_dashboard' %}" class="back-btn">
-      <i class="fas fa-arrow-left"></i> Back to Dashboard
-    </a>
   </div>
 </div>
 {% endblock %}

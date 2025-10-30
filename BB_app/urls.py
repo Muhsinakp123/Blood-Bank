@@ -23,6 +23,8 @@ urlpatterns = [
     path('blood_camp/', views.blood_camp, name='blood_camp'),
     path('generate_report/', views.generate_report, name='generate_report'),
     path('create_camp/', views.create_camp, name='create_camp'),
+    path('camp/update/<int:id>/', views.update_camp, name='update_camp'),
+    path('camp/delete/<int:id>/', views.delete_camp, name='delete_camp'),
     path('mark_notification/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
 
 

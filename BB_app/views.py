@@ -190,15 +190,22 @@ def hospital_stock(request):
     hospital = get_object_or_404(HospitalProfile, user=request.user)
     blood_stocks = BloodStock.objects.filter(hospital=hospital)
 
-    labels = [stock.blood_group for stock in blood_stocks]
-    values = [stock.units_available for stock in blood_stocks]
+    # 🔹 Combine duplicates by blood group
+    stock_summary = {}
+    for stock in blood_stocks:
+        if stock.blood_group in stock_summary:
+            stock_summary[stock.blood_group] += stock.units_available
+        else:
+            stock_summary[stock.blood_group] = stock.units_available
+
+    # Prepare data for chart
+    labels = list(stock_summary.keys())
+    values = list(stock_summary.values())
 
     # --- Generate Pie Chart using Matplotlib ---
     fig, ax = plt.subplots(figsize=(5, 5))
     ax.pie(values, labels=labels, autopct='%1.1f%%', startangle=90)
-    ax.axis('equal')  # Makes the pie chart a perfect circle
     ax.set_title('Blood Stock Distribution')
-
 
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
@@ -217,23 +224,42 @@ def hospital_stock(request):
 @login_required
 def add_stock(request):
     hospital = get_object_or_404(HospitalProfile, user=request.user)
+
     if request.method == 'POST':
         form = BloodStockForm(request.POST)
         if form.is_valid():
-            stock = form.save(commit=False)
-            stock.hospital = hospital
-            stock.save()
-            messages.success(request, f"Blood group {stock.blood_group} added successfully!")
-            return redirect('hospital_dashboard')
+            blood_group = form.cleaned_data['blood_group']
+            units = form.cleaned_data['units_available']
+
+            #  Check if this blood group already exists for the hospital
+            existing_stock = BloodStock.objects.filter(hospital=hospital, blood_group=blood_group).first()
+
+            if existing_stock:
+                #  Update existing stock
+                existing_stock.units_available += units
+                existing_stock.save()
+                messages.success(request, f"{units} units added to existing stock of {blood_group}.")
+            else:
+                #  Create new stock record
+                new_stock = form.save(commit=False)
+                new_stock.hospital = hospital
+                new_stock.save()
+                messages.success(request, f"New blood group {blood_group} added with {units} units.")
+
+            return redirect('hospital_stock')
+
     else:
         form = BloodStockForm()
+
     return render(request, 'add_stock.html', {'form': form})
+
 
 
 # 🩸 Request Blood
 @login_required
 def request_blood(request):
     hospital = get_object_or_404(HospitalProfile, user=request.user)
+
     if request.method == 'POST':
         form = BloodRequestForm(request.POST)
         if form.is_valid():
@@ -241,18 +267,27 @@ def request_blood(request):
             req.hospital = hospital
             req.save()
 
-    # ✅ Create notification
-    Notification.objects.create(
-        hospital=hospital,
-        title="Blood Request Submitted",
-        message=f"You have requested {req.units_requested} units of {req.blood_group} blood for patient {req.patient_name}.",
-    )
+            # ✅ Emergency check
+            if req.is_emergency:
+                Notification.objects.create(
+                    hospital=hospital,
+                    title="🚨 Emergency Blood Request!",
+                    message=f"⚠️ EMERGENCY: {req.patient_name} needs {req.units_requested} units of {req.blood_group} urgently!",
+                )
+            else:
+                Notification.objects.create(
+                    hospital=hospital,
+                    title="Blood Request Submitted",
+                    message=f"You have requested {req.units_requested} units of {req.blood_group} for patient {req.patient_name}.",
+                )
 
-    messages.success(request, "Blood request submitted successfully!")
-    return redirect('hospital_dashboard')
+            messages.success(request, "Blood request submitted successfully!")
+            return redirect('hospital_dashboard')
 
+    else:
+        form = BloodRequestForm()
 
-
+    return render(request, 'request_blood.html', {'form': form})
 # 📋 View Requests
 @login_required
 def view_request(request):
@@ -295,8 +330,23 @@ def hospital_profile_delete(request):
     messages.info(request, "Your profile has been deleted.")
     return redirect('login')
 
+@login_required
+def update_camp(request, id):
+    camp = get_object_or_404(BloodDonationCamp, id=id)
+    if request.method == 'POST':
+        form = BloodDonationCampForm(request.POST, instance=camp)
+        if form.is_valid():
+            form.save()
+            return redirect('blood_camp')
+    else:
+        form = BloodDonationCampForm(instance=camp)
+    return render(request, 'update_camp.html', {'form': form})
 
-
+@login_required
+def delete_camp(request, id):
+    camp = get_object_or_404(BloodDonationCamp, id=id)
+    camp.delete()
+    return redirect('blood_camp')
 
 
 def patient_dashboard(request):

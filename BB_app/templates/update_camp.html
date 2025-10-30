@@ -1,0 +1,20 @@
+{% extends "master.html" %}
+{% block title %}Update Blood Donation Camp{% endblock %}
+{% block content %}
+<div class="update-camp-page">
+  <div class="update-camp-card">
+    <h2>✏️ Update Blood Donation Camp</h2>
+    <p class="subtitle">Modify your existing camp details below.</p>
+
+    <form method="post" class="update-camp-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <div class="update-buttons">
+        <button type="submit" class="btn-update">Update</button>
+        <a href="{% url 'blood_camp' %}" class="btn-cancel">← Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

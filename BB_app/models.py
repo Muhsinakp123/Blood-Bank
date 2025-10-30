@@ -48,11 +48,6 @@ class DonorProfile(models.Model):
     
     # Health Information
     weight = models.FloatField()
-    height = models.FloatField()
-    medicine_details = models.TextField(blank=True, null=True)
-
-    chronic_disease = models.TextField(blank=True, null=True)
-    allergies = models.TextField(blank=True, null=True)
     
 
     def __str__(self):
@@ -130,9 +125,23 @@ class BloodStock(models.Model):
 class BloodRequest(models.Model):
     hospital = models.ForeignKey(HospitalProfile, on_delete=models.CASCADE, related_name="blood_requests")
     patient_name = models.CharField(max_length=100)
-    blood_group = models.CharField(max_length=3)
+
+    blood_group = models.CharField(
+        max_length=3,
+        choices=[
+            ('A+', 'A+'), ('A-', 'A-'),
+            ('B+', 'B+'), ('B-', 'B-'),
+            ('O+', 'O+'), ('O-', 'O-'),
+            ('AB+', 'AB+'), ('AB-', 'AB-'),
+        ]
+    )
+
     units_requested = models.PositiveIntegerField()
     date_required = models.DateField()
+
+    #  New field for emergency
+    is_emergency = models.BooleanField(default=False)
+
     request_date = models.DateTimeField(auto_now_add=True)
     status_choices = [
         ('Pending', 'Pending'),

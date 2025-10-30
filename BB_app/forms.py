@@ -79,17 +79,13 @@ class DonorForm(forms.ModelForm):
         fields = [
             'full_name', 'age', 'gender', 'blood_group', 'address',
             'contact_number', 'email', 'profile_pic',
-            'weight', 'height', 'medicine_details', 'chronic_disease',
-            'allergies',
-        ]
+            'weight',
+            ]
         widgets = {
             'gender': forms.Select(choices=[('Male','Male'),('Female','Female'),('Other','Other')]),
             'blood_group': forms.Select(choices=[('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),
                                                  ('O+','O+'),('O-','O-'),('AB+','AB+'),('AB-','AB-')]),
             'address': forms.Textarea(attrs={'rows':3}),
-            'medicine_details': forms.Textarea(attrs={'rows':2, 'placeholder': 'List any medicines you are currently taking'}),
-            'chronic_disease': forms.Textarea(attrs={'rows':2}),
-            'allergies': forms.Textarea(attrs={'rows':2}),
         }
 
 # ------------------ Patient Form ------------------
@@ -149,7 +145,16 @@ class BloodStockForm(forms.ModelForm):
 class BloodRequestForm(forms.ModelForm):
     class Meta:
         model = BloodRequest
-        fields = ['patient_name', 'blood_group', 'units_requested', 'date_required']
+        fields = ['patient_name', 'blood_group', 'units_requested', 'date_required', 'is_emergency']
+        widgets = {
+            'blood_group': forms.Select(choices=[
+                ('A+', 'A+'), ('A-', 'A-'),
+                ('B+', 'B+'), ('B-', 'B-'),
+                ('O+', 'O+'), ('O-', 'O-'),
+                ('AB+', 'AB+'), ('AB-', 'AB-'),
+            ]),
+            'date_required': forms.DateInput(attrs={'type': 'date'}),
+        }
         
 
 

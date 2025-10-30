@@ -1,10 +1,21 @@
 {% extends 'master.html' %}
 {% block title %}Hospital Request Blood{% endblock %}
 {% block content %}
-<h3>Request Blood for Patient</h3>
-<form method="POST">{% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-danger">Request</button>
-  <a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary">Cancel</a>
-</form>
+
+<div class="request-blood-page">
+  <div class="request-blood-card">
+    <h2>🩸 Request Blood for Patient</h2>
+
+    <form method="POST" class="request-blood-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <div class="button-group">
+        <button type="submit" class="btn-add">Request</button>
+        <a href="{% url 'hospital_dashboard' %}" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
 {% endblock %}

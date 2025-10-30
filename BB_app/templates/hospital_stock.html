@@ -2,35 +2,19 @@
 {% block title %}Hospital Stock{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-  <h2 class="mb-4 text-center">🩸 Blood Stock Overview</h2>
+<div class="hospital-stock-page">
+  <div class="hospital-stock-container">
+    <h2>🩸 Blood Stock Overview</h2>
 
-  <div class="text-center mb-4">
     {% if chart_image %}
-      <img src="data:image/png;base64,{{ chart_image }}" alt="Blood Stock Pie Chart" class="img-fluid shadow rounded" style="max-width: 400px;">
+      <img src="data:image/png;base64,{{ chart_image }}" 
+           alt="Blood Stock Pie Chart" 
+           class="img-fluid">
     {% else %}
       <p>No data available to display chart.</p>
     {% endif %}
-  </div>
 
-  <table class="table table-bordered table-striped text-center">
-    <thead class="table-dark">
-      <tr><th>Blood Group</th><th>Units Available</th></tr>
-    </thead>
-    <tbody>
-      {% for stock in blood_stocks %}
-        <tr>
-          <td>{{ stock.blood_group }}</td>
-          <td>{{ stock.units_available }}</td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="2">No blood stock available.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <div class="text-center mt-4">
-    <a href="{% url 'hospital_dashboard' %}" class="btn btn-secondary px-4">← Back to Dashboard</a>
+    <a href="{% url 'hospital_dashboard' %}" class="btn-back">← Back to Dashboard</a>
   </div>
 </div>
 {% endblock %}

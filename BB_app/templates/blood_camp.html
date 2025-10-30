@@ -1,42 +1,56 @@
 {% extends "master.html" %}
+{% block title %}Blood Donation Camps{% endblock %}
 {% block content %}
-<div class="camp-dashboard container mt-4 text-center">
-    <h2 class="text-danger mb-4">Blood Donation Camps</h2>
-    <a href="{% url 'create_camp' %}" class="btn btn-danger mb-4">+ Create New Camp</a>
+<div class="camp-dashboard">
+  <h2>🩸 Blood Donation Camps</h2>
 
-    {% if camps %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead class="table-danger">
-                <tr>
-                    <th>Camp Name</th>
-                    <th>Date</th>
-                    <th>Venue</th>
-                    <th>Organizer</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for camp in camps %}
-                <tr>
-                    <td>{{ camp.camp_name }}</td>
-                    <td>{{ camp.date }}</td>
-                    <td>{{ camp.venue }}</td>
-                    <td>{{ camp.organizer }}</td>
-                    <td>{{ camp.description|default:"—" }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <!-- Back Button -->
-        <div class="back-btn-container">
-            <a href="{% url 'hospital_dashboard' %}" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </a>
-        </div>
-    </div>
-    {% else %}
-    <p>No camps scheduled yet.</p>
-    {% endif %}
+  <div class="camp-actions">
+    <a href="{% url 'create_camp' %}" class="btn-create">+ Create New Camp</a>
+  </div>
+
+  {% if camps %}
+  <div class="camp-table-container">
+    <table class="camp-table">
+      <thead>
+        <tr>
+          <th>Camp Name</th>
+          <th>Date</th>
+          <th>Venue</th>
+          <th>Organizer</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+    <tbody>
+  {% for camp in camps %}
+  <tr>
+    <td>{{ camp.camp_name }}</td>
+    <td>{{ camp.date }}</td>
+    <td>{{ camp.venue }}</td>
+    <td>{{ camp.organizer }}</td>
+    <td>{{ camp.description|default:"—" }}</td>
+    <td class="camp-actions-cell">
+      <a href="{% url 'update_camp' camp.id %}" class="btn-edit">
+        <i class="fas fa-edit"></i> Edit
+      </a>
+      <a href="{% url 'delete_camp' camp.id %}" class="btn-delete" onclick="return confirm('Are you sure you want to delete this camp?');">
+        <i class="fas fa-trash-alt"></i> Delete
+      </a>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+
+    </table>
+  </div>
+  {% else %}
+  <p class="no-camp-text">No camps scheduled yet.</p>
+  {% endif %}
+
+  <div class="back-btn-container">
+    <a href="{% url 'hospital_dashboard' %}" class="back-btn">
+      ← Back to Dashboard
+    </a>
+  </div>
 </div>
 {% endblock %}
