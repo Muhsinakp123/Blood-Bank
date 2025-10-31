@@ -7,7 +7,8 @@ from .models import BloodDonationCamp, Profile
 from django.contrib.auth.models import User
 from .models import HospitalProfile, BloodStock, BloodRequest,BloodDonation,Notification
 from .forms import BloodStockForm, BloodRequestForm
-
+from .models import DonorAppointmentRequest
+from .forms import DonorAppointmentRequestForm
 import io
 import base64
 from matplotlib import pyplot as plt
@@ -352,8 +353,68 @@ def delete_camp(request, id):
 def patient_dashboard(request):
     return render(request,'patient_dashboard.html')
 
+@login_required
 def donor_dashboard(request):
-    return render(request,'donor_dashboard.html')
+    donor = DonorProfile.objects.get(user=request.user)
+    return render(request, 'donor_dashboard.html', {'donor': donor})
+
+@login_required
+def donor_profile(request):
+    donor = DonorProfile.objects.get(user=request.user)
+    return render(request, 'donor_profile.html', {'donor': donor})
+
+
+
+@login_required
+def donor_appoinment(request):
+    if request.method == 'POST':
+        form = DonorAppointmentRequestForm(request.POST)
+        if form.is_valid():
+            # Save all answers into the database
+            responses = form.cleaned_data
+            DonorAppointmentRequest.objects.create(
+                donor=request.user,
+                responses=responses,
+                status='Pending'
+            )
+            messages.success(request, "Your donation appointment request has been submitted successfully!")
+            return redirect('donor_dashboard')
+    else:
+        form = DonorAppointmentRequestForm()
+
+    return render(request, 'donor_appoinment.html', {'form': form})
+
+@login_required
+def donation_status(request):
+    donor_requests = DonorAppointmentRequest.objects.filter(donor=request.user).order_by('-submitted_on')
+    return render(request, 'donation_status.html', {'donor_requests': donor_requests})
+
+
+
+# ---------- 1. Donation History ----------
+def donation_history(request):
+    donor = request.user
+    donations = DonorAppointmentRequest.objects.filter(donor=donor).order_by('-submitted_on')
+    return render(request, 'donation_history.html', {'donations': donations})
+
+
+# ---------- 2. Camps ----------
+def donor_camp(request):
+    camps = BloodDonationCamp.objects.all().order_by('-date')
+    return render(request, 'donor_camp.html', {'camps': camps})
+
+
+# ---------- 3. Hospitals ----------
+def view_hospital(request):
+    hospitals = HospitalProfile.objects.all().order_by('hospital_name')
+    return render(request, 'view_hospital.html', {'hospitals': hospitals})
+
+
+# ---------- 4. Notifications ----------
+def donor_notifications(request):
+    # Assuming you have a Notification model with fields title, message, and type
+    notifications = Notification.objects.all().order_by('-id')
+    return render(request, 'donor_notifications.html', {'notifications': notifications})
 
 
 # --- Logout ---

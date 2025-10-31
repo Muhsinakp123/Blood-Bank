@@ -1,0 +1,25 @@
+{% extends 'master.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg p-4">
+    <h3 class="text-center text-danger fw-bold mb-4">🏕️ Upcoming Blood Donation Camps</h3>
+    {% if camps %}
+      <div class="row">
+        {% for camp in camps %}
+          <div class="col-md-6 mb-3">
+            <div class="card border-danger shadow-sm p-3">
+              <h5 class="text-danger">{{ camp.camp_name }}</h5>
+              <p><strong>Date:</strong> {{ camp.date }}</p>
+              <p><strong>Venue:</strong> {{ camp.venue }}</p>
+              <p><strong>Organizer:</strong> {{ camp.organizer }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-muted">No camps available.</p>
+    {% endif %}
+      <a href="{% url 'donor_dashboard' %}">Back to Dashboard</a>
+  </div>
+</div>
+{% endblock %}

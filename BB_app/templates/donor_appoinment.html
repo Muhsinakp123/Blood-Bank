@@ -1,0 +1,17 @@
+{% extends 'master.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3 text-center text-danger fw-bold">🩸 Blood Donation Eligibility Form</h3>
+  <p class="text-muted text-center">Please answer the following questions truthfully to ensure safe and healthy blood donation.</p>
+  <hr>
+
+  <form method="post" class="p-4 card shadow-sm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-danger px-4">Submit Request</button>
+    </div>
+      <a href="{% url 'donor_dashboard' %}">Back to Dashboard</a>
+  </form>
+</div>
+{% endblock %}

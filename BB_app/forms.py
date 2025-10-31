@@ -80,13 +80,30 @@ class DonorForm(forms.ModelForm):
             'full_name', 'age', 'gender', 'blood_group', 'address',
             'contact_number', 'email', 'profile_pic',
             'weight',
-            ]
+        ]
         widgets = {
-            'gender': forms.Select(choices=[('Male','Male'),('Female','Female'),('Other','Other')]),
-            'blood_group': forms.Select(choices=[('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),
-                                                 ('O+','O+'),('O-','O-'),('AB+','AB+'),('AB-','AB-')]),
-            'address': forms.Textarea(attrs={'rows':3}),
+            'gender': forms.Select(choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')]),
+            'blood_group': forms.Select(choices=[
+                ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
+                ('O+', 'O+'), ('O-', 'O-'), ('AB+', 'AB+'), ('AB-', 'AB-')
+            ]),
+            'address': forms.Textarea(attrs={'rows': 3}),
         }
+
+    # 🔹 Custom validation for donor eligibility
+    def clean(self):
+        cleaned_data = super().clean()
+        age = cleaned_data.get('age')
+        weight = cleaned_data.get('weight')
+
+        # Validate age and weight
+        if age is not None and age < 18:
+            raise forms.ValidationError("❌ You must be at least 18 years old to donate blood.")
+        if weight is not None and weight < 50:
+            raise forms.ValidationError("❌ You must weigh at least 50 kg to donate blood.")
+
+        return cleaned_data
+
 
 # ------------------ Patient Form ------------------
 class PatientForm(forms.ModelForm):
@@ -167,3 +184,19 @@ class BloodDonationCampForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 3}),
         }
 
+
+# ------------------ Donor Appointment Request Form ------------------
+class DonorAppointmentRequestForm(forms.Form):
+    q1 = forms.CharField(label="Have you donated blood before? If yes, when was your last donation?", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Type date or say No'}))
+    q2 = forms.ChoiceField(label="Are you currently taking any medications?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q3 = forms.ChoiceField(label="Have you had any major surgeries recently?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q4 = forms.ChoiceField(label="Do you have any chronic diseases (like diabetes, hypertension, or heart problems)?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q5 = forms.ChoiceField(label="Have you ever had jaundice, hepatitis, malaria, or HIV?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q6 = forms.CharField(label="Have you been vaccinated recently? (If yes, when and which vaccine?)", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write vaccine name or say No'}))
+    q7 = forms.ChoiceField(label="Do you have any allergies or bleeding disorders?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q8 = forms.CharField(label="Have you ever received a blood transfusion? If yes, when?", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Write date or say No'}))
+    q9 = forms.ChoiceField(label="Have you recently traveled to an area with malaria or other infectious diseases?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q10 = forms.ChoiceField(label="Do you smoke, drink alcohol, or use recreational drugs?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q11 = forms.ChoiceField(label="Have you had any tattoos, piercings, or acupuncture in the past 6–12 months?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q12 = forms.ChoiceField(label="Have you had any recent illnesses, fever, or infections?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
+    q13 = forms.ChoiceField(label="Are you currently pregnant, breastfeeding, or menstruating? (for female donors)", choices=[('Yes', 'Yes'), ('No', 'No'), ('Not Applicable', 'Not Applicable')], widget=forms.RadioSelect)

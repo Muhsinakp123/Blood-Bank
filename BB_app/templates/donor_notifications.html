@@ -1,0 +1,19 @@
+{% extends 'master.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg p-4">
+    <h3 class="text-center text-danger fw-bold mb-4">🔔 Notifications</h3>
+    {% if notifications %}
+      {% for notif in notifications %}
+        <div class="alert {% if 'EMERGENCY' in notif.title %}alert-danger{% else %}alert-info{% endif %} shadow-sm">
+          <strong>{{ notif.title }}</strong><br>
+          {{ notif.message }}
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-center text-muted">No notifications at the moment.</p>
+    {% endif %}
+      <a href="{% url 'donor_dashboard' %}">Back to Dashboard</a>
+  </div>
+</div>
+{% endblock %}

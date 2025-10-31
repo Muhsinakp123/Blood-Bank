@@ -186,3 +186,18 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.title} - {self.hospital.hospital_name}"
 
+class DonorAppointmentRequest(models.Model):
+    donor = models.ForeignKey(User, on_delete=models.CASCADE)
+    responses = models.JSONField()
+    submitted_on = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(default='Pending', max_length=20)
+
+class DonorAppointmentRequest(models.Model):
+    donor = models.ForeignKey(User, on_delete=models.CASCADE)
+    responses = models.JSONField()  # to store answers as JSON
+    submitted_on = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, default='Pending')
+    remarks = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Request by {self.donor.username} on {self.submitted_on.date()}"

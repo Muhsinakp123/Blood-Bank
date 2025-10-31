@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('help&support/',views.help,name='help'),
     path('contact/',views.contact_view,name='contact'),
+    
     path('admin_dashboard/',views.admin_dashboard,name='admin_dashboard'),
     path('patient_form/',views.patient_form,name='patient_form'),
     path('donor_form/',views.donor_form,name='donor_form'),
@@ -26,12 +27,22 @@ urlpatterns = [
     path('camp/update/<int:id>/', views.update_camp, name='update_camp'),
     path('camp/delete/<int:id>/', views.delete_camp, name='delete_camp'),
     path('mark_notification/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
-
-
-
+    
     
     path('patient_dashboard/',views.patient_dashboard,name='patient_dashboard'),
+    
+    
+    path('view/hospital/', views.view_hospital, name='view_hospital'),
+    
+    
     path('donor_dashboard/',views.donor_dashboard,name='donor_dashboard'),
+    path('donor/profile/', views.donor_profile, name='donor_profile'),
+    path('donor/appoinment/', views.donor_appoinment, name='donor_appoinment'),
+    path('donor/donation_status/', views.donation_status, name='donation_status'),
+    path('donor/donation_history/', views.donation_history, name='donation_history'),
+    path('donor/camp/', views.donor_camp, name='donor_camp'),
+    path('donor/notifications/', views.donor_notifications, name='donor_notifications'),
+
     
         # --- Password Reset ---
     path('forgot_password/', views.forgot_password, name='forgot_password'),
