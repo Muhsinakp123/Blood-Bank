@@ -1,0 +1,47 @@
+{% extends 'admin_master.html' %}
+{% block title %}Manage Hospital Blood Stock{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dashboard-header fade-in">
+  <h2><i class="fa fa-tint me-2"></i> Manage Hospital Blood Stock</h2>
+</div>
+
+<!-- Main Content Card -->
+<div class="hospital-stock-card fade-in">
+  <h3 class="stock-title">
+    🏥 Hospital Blood Stock Overview
+  </h3>
+
+  <div class="table-responsive">
+    <table class="table custom-table align-middle text-center">
+      <thead>
+        <tr>
+          <th>Hospital Name</th>
+          <th>Location</th>
+          <th>Contact</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for hospital in hospitals %}
+        <tr>
+          <td class="fw-semibold text-dark">{{ hospital.hospital_name }}</td>
+          <td>{{ hospital.location }}</td>
+          <td>{{ hospital.contact }}</td>
+          <td>
+            <a href="{% url 'hospital_stock' hospital.id %}" class="show-btn">
+              <i class="bi bi-bar-chart"></i> Show
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="text-muted py-4">No hospitals found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

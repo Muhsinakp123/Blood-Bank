@@ -318,6 +318,9 @@
   padding: 40px;
   transition: all 0.3s ease;
   border-top: 5px solid #b30000;
+  margin: 0 auto;
+  margin-top: 40px;
+  margin-bottom: 30px;
 }
 
 .profile-card:hover {
@@ -392,7 +395,31 @@
   outline: none;
 }
 
+
 /* ---------- Buttons ---------- */
+.btn-save, .btn_delete {
+  flex: 1;
+  background: white;
+  border: 2px solid #b30000;
+  color: #b30000;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+}
+
+/* Hover effect for both buttons */
+.btn-save:hover, .btn_delete:hover {
+  background: #b30000;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Button Row layout */
 .button-row {
   display: flex;
   justify-content: space-between;
@@ -400,46 +427,21 @@
   gap: 20px;
 }
 
-
-.btn-save {
-  flex: 1;
-  background: white;
-  border: 2px solid #b30000;
-  color: #b30000;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 1.05rem;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
-}
-
-.btn-save:hover {
-  background: #b30000;
+/* Back button */
+.back-btn {
+  background-color: #b30000;
   color: white;
-  transform: translateY(-2px);
-}
-
-.btn-delete {
-  flex: 1;
-  background: white;
-  border: 2px solid #b30000;
-  color: #b30000;
   padding: 12px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 1.05rem;
-  text-align: center;
+  border-radius: 8px;
   text-decoration: none;
+  font-weight: 500;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(179, 0, 0, 0.2);
+  text-align: center;
 }
 
-.btn-delete:hover {
-  background: #b30000;
-  color: white;
+.back-btn:hover {
+  background-color: #8c0000;
   transform: translateY(-2px);
 }
 

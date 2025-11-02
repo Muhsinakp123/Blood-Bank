@@ -1,0 +1,44 @@
+{% extends "master.html" %}
+{% load static %}
+{% block title %}Blood Received History{% endblock %}
+{% block content %}
+
+<div class="appointment-form">
+  <div class="form-card">
+    <div class="form-header text-center mb-4">
+      <h2>Blood Received History</h2>
+      <p>View your completed blood transfusion records.</p>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Hospital</th>
+            <th>Blood Group</th>
+            <th>Units</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in received %}
+          <tr>
+            <td>{{ record.date_donated|date:"M d, Y" }}</td>
+            <td>{{ record.hospital.name }}</td>
+            <td>{{ record.blood_group }}</td>
+            <td>{{ record.units }}</td>
+            <td><span class="badge bg-success">Received</span></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-muted">No blood transfusion history found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

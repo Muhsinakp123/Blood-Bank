@@ -1,0 +1,265 @@
+{% extends 'admin_master.html' %}
+{% load static %}
+{% block title %}View Users{% endblock %}
+
+{% block content %}
+<style>
+  /* ================================
+   View Users Page – Custom Styling
+================================ */
+
+/* ---------- General Table Styling Enhancements ---------- */
+.table th {
+  background-color: #ffe6e6 !important;
+  color: #b30000 !important;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.table td {
+  vertical-align: middle !important;
+  font-size: 0.95rem;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #fff5f5 !important;
+}
+
+/* ---------- Donor Profile Thumbnails ---------- */
+.donor-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #b30000;
+  box-shadow: 0 2px 6px rgba(179, 0, 0, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.donor-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.3);
+}
+
+/* Placeholder when no profile image is available */
+.no-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #ddd;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 1px solid #ccc;
+}
+
+/* ---------- View Buttons (Hospital & Patient) ---------- */
+.btn-outline-danger.btn-sm {
+  border: 1px solid #b30000 !important;
+  color: #b30000 !important;
+  font-weight: 500;
+  padding: 5px 12px !important;
+  border-radius: 6px !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-danger.btn-sm:hover {
+  background-color: #b30000 !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+}
+
+/* ---------- Card Headers ---------- */
+.card-header.bg-danger {
+  background: linear-gradient(90deg, #b30000, #cc0000) !important;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Section Titles ---------- */
+.dashboard-header h2 i {
+  color: #fff !important;
+}
+
+.card-header i {
+  color: #fff !important;
+  margin-right: 8px;
+}
+
+/* ---------- Responsive Thumbnail Adjustment ---------- */
+@media (max-width: 768px) {
+  .donor-thumb, .no-thumb {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+</style>
+<div class="container-fluid py-4">
+  <div class="dashboard-header mb-4">
+    <h2><i class="fas fa-users me-2 text-danger"></i> View All Users</h2>
+  </div>
+
+  <!-- 🏥 HOSPITALS TABLE -->
+  <div class="card shadow-sm mb-4 border-danger">
+    <div class="card-header bg-danger text-white">
+      <h5 class="mb-0"><i class="fas fa-hospital me-2"></i> Hospitals</h5>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-danger">
+          <tr>
+            <th>Hospital Name</th>
+            <th>Hospital ID</th>
+            <th>Location</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Storage Capacity</th>
+            <th>Requests</th>
+            <th>License</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in hospitals %}
+          <tr>
+            <td>{{ h.hospital_name }}</td>
+            <td>{{ h.hospital_id }}</td>
+            <td>{{ h.location }}</td>
+            <td>{{ h.contact }}</td>
+            <td>{{ h.email }}</td>
+            <td>{{ h.storage_capacity }}</td>
+            <td>{{ h.requests|default:"-" }}</td>
+            <td>
+              {% if h.license_upload %}
+              <a href="{{ h.license_upload.url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                <i class="fas fa-file-alt"></i> View
+              </a>
+              {% else %}
+              <span class="text-muted">No License</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-muted">No hospitals found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 🩸 DONORS TABLE -->
+  <div class="card shadow-sm mb-4 border-danger">
+    <div class="card-header bg-danger text-white">
+      <h5 class="mb-0"><i class="fas fa-hand-holding-medical me-2"></i> Donors</h5>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-danger">
+          <tr>
+            <th>Full Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Blood Group</th>
+            <th>Address</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Weight</th>
+            <th>Profile</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in donors %}
+          <tr>
+            <td>{{ d.full_name }}</td>
+            <td>{{ d.age }}</td>
+            <td>{{ d.gender }}</td>
+            <td>{{ d.blood_group }}</td>
+            <td>{{ d.address }}</td>
+            <td>{{ d.contact_number }}</td>
+            <td>{{ d.email }}</td>
+            <td>{{ d.weight }}</td>
+              <td>
+              {% if d.profile_pic %}
+              <a href="{{ d.profile_pic.url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                <i class="fas fa-user-circle"></i> View
+              </a>
+              {% else %}
+              <span class="text-muted">No Profile</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="text-muted">No donors found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 🧍‍♀️ PATIENTS TABLE -->
+  <div class="card shadow-sm border-danger">
+    <div class="card-header bg-danger text-white">
+      <h5 class="mb-0"><i class="fas fa-user-injured me-2"></i> Patients</h5>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-danger">
+          <tr>
+            <th>Full Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Blood Needed</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Hospital</th>
+            <th>Disease</th>
+            <th>Units Required</th>
+            <th>Date Required</th>
+            <th>Notes</th>
+            <th>Prescription</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in patients %}
+          <tr>
+            <td>{{ p.full_name }}</td>
+            <td>{{ p.age }}</td>
+            <td>{{ p.gender }}</td>
+            <td>{{ p.blood_group_needed }}</td>
+            <td>{{ p.contact_number }}</td>
+            <td>{{ p.email }}</td>
+            <td>{{ p.address|default:"-" }}</td>
+            <td>{{ p.hospital_name|default:"-" }}</td>
+            <td>{{ p.disease_condition|default:"-" }}</td>
+            <td>{{ p.units_required }}</td>
+            <td>{{ p.date_required|date:"M d, Y" }}</td>
+            <td>{{ p.notes|default:"-" }}</td>
+            <td>
+              {% if p.prescription %}
+              <a href="{{ p.prescription.url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                <i class="fas fa-file-prescription"></i> View
+              </a>
+              {% else %}
+              <span class="text-muted">No File</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="13" class="text-muted">No patients found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "master.html" %}
+{% load static %}
+{% block title %}Request Blood{% endblock %}
+{% block content %}
+
+<div class="appointment-form">
+  <div class="form-card">
+    <div class="form-header text-center mb-4">
+      <h2>Submit Blood Request</h2>
+      <p>Fill in the details to request blood for transfusion.</p>
+    </div>
+
+    <form method="post" class="profile-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="text-center">
+        <button type="submit" class="btn-save" style="width:200px;">Submit Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -12,17 +12,20 @@
       {% csrf_token %}
       {{ form.as_p }}
 
+      <!-- Button Row -->
       <div class="button-row">
         <button type="submit" class="btn-save">💾 Update</button>
-        <a href="{% url 'hospital_profile_delete' %}" class="btn-delete" onclick="return confirmDelete();">🗑 Delete</a>
+        <a href="{% url 'hospital_profile_delete' %}" class="btn_delete" onclick="return confirmDelete();">🗑 Delete</a>
       </div>
+
       <a href="{% url 'hospital_dashboard' %}" class="back-btn">← Back to Dashboard</a>
     </form>
   </div>
 </div>
+
 <script>
-function confirmDelete() {
-  return confirm("⚠️ Are you sure you want to delete this hospital profile?");
-}
+  function confirmDelete() {
+    return confirm("⚠️ Are you sure you want to delete this hospital profile?");
+  }
 </script>
 {% endblock %}

@@ -1,8 +1,45 @@
-{% extends 'master.html' %}
-{% block title %}Login{% endblock %}
+{% extends 'admin_master.html' %}
+{% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<h1>hi i am admin</h1>
+<div class="dashboard-header">
+          <h2>{% block header_title %}Dashboard Overview{% endblock %}</h2>
+          <i class="fa fa-user-circle"></i>
+      </div>
+<div class="welcome-box text-center mt-4 mb-4">
+    <h3>Welcome, <span class="username">{{ request.user.username }}</span></h3>
+</div>
+<div class="row stats-container justify-content-center">
+    <div class="col-md-2 col-sm-6 mb-4">
+        <div class="card stat-card text-center p-3">
+            <i class="fa fa-heart stat-icon text-danger"></i>
+            <h6>Total Donors</h6>
+            <h4>{{ total_donors }}</h4>
+        </div>
+    </div>
+
+    <div class="col-md-2 col-sm-6 mb-4">
+        <div class="card stat-card text-center p-3">
+            <i class="fa fa-tint stat-icon text-primary"></i>
+            <h6>Total Blood Units</h6>
+            <h4>{{ total_stock_units }}</h4>
+        </div>
+    </div>
+
+    <div class="col-md-2 col-sm-6 mb-4">
+        <div class="card stat-card text-center p-3">
+            <i class="fa fa-hospital stat-icon text-danger"></i>
+            <h6>Registered Hospitals</h6>
+            <h4>{{ total_hospitals }}</h4>
+        </div>
+    </div>
+
+    <div class="col-md-2 col-sm-6 mb-4">
+        <div class="card stat-card text-center p-3">
+            <i class="fa fa-ambulance stat-icon text-warning"></i>
+            <h6>Total Requests</h6>
+            <h4>{{ total_requests }}</h4>
+        </div>
+    </div>
+</div>
 {% endblock %}
-
-

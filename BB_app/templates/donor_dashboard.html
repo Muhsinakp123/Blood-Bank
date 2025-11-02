@@ -8,7 +8,7 @@
   <!-- Header with Welcome and Profile Dropdown -->
   <div class="dashboard-header">
     <div class="welcome-text">
-      <h2>Welcome, {{ donor.name }}</h2>
+      <h2>Welcome, {{ request.user.username|title }}</h2>
       <p>Manage your blood donation activities and appointments efficiently.</p>
     </div>
 
@@ -56,8 +56,8 @@
 
     <a href="{% url 'donor_camp' %}" class="hosp-card">
       <i class="fas fa-hand-holding-heart"></i>
-      <h4>Donation Camps</h4>
-      <p>See upcoming and nearby blood donation camps.</p>
+      <h4>Camps</h4>
+      <p>See upcoming and nearby camps.</p>
     </a>
 
     <a href="{% url 'view_hospital' %}" class="hosp-card">
@@ -77,11 +77,13 @@
 </div>
 
 <script>
+  // Profile dropdown toggle
   function toggleDropdown() {
     const dropdown = document.getElementById("dropdownMenu");
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
   }
 
+  // Hide dropdown when clicking outside
   document.addEventListener("click", function (event) {
     const dropdown = document.getElementById("dropdownMenu");
     const logo = document.getElementById("logoDropdown");
@@ -90,6 +92,7 @@
     }
   });
 
+  // Logout confirmation
   function confirmLogout(event) {
     event.preventDefault();
     if (confirm("Are you sure you want to logout?")) {

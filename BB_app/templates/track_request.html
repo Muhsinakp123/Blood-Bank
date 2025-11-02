@@ -1,0 +1,64 @@
+{% extends "master.html" %}
+{% load static %}
+{% block title %}Track Request Status{% endblock %}
+{% block content %}
+
+<div class="appointment-form">
+  <div class="form-card">
+    <div class="form-header text-center mb-4">
+      <h2>Track Request Status</h2>
+      <p>Monitor the progress of your submitted blood requests.</p>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Blood Group</th>
+            <th>Units</th>
+            <th>Hospital</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Urgency</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in requests %}
+          <tr>
+            <td>{{ req.id }}</td>
+            <td>{{ req.blood_group }}</td>
+            <td>{{ req.quantity }}</td>
+            <td>{{ req.hospital.name }}</td>
+            <td>{{ req.request_date|date:"M d, Y" }}</td>
+            <td>
+              {% if req.status == "Approved" %}
+              <span class="badge bg-success">Approved</span>
+              {% elif req.status == "Pending" %}
+              <span class="badge bg-warning text-dark">Pending</span>
+              {% elif req.status == "Rejected" %}
+              <span class="badge bg-danger">Rejected</span>
+              {% else %}
+              <span class="badge bg-secondary">Completed</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if req.urgency == "Emergency" %}
+              <span class="badge bg-danger">Emergency</span>
+              {% else %}
+              <span class="badge bg-info text-dark">Normal</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-muted">No blood requests found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

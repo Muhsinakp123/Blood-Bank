@@ -2,19 +2,23 @@
 {% block title %}Hospital Stock{% endblock %}
 
 {% block content %}
-<div class="hospital-stock-page">
+<div class="hospital-stock-page fade-in">
   <div class="hospital-stock-container">
     <h2>🩸 Blood Stock Overview</h2>
 
     {% if chart_image %}
       <img src="data:image/png;base64,{{ chart_image }}" 
            alt="Blood Stock Pie Chart" 
-           class="img-fluid">
+           class="img-fluid chart-image">
     {% else %}
       <p>No data available to display chart.</p>
     {% endif %}
 
-    <a href="{% url 'hospital_dashboard' %}" class="btn-back">← Back to Dashboard</a>
+    <a href="{% if is_admin_view %}{% url 'admin_hospital_stock' %}{% else %}{% url 'hospital_dashboard' %}{% endif %}" 
+   class="btn-back">
+   ← Back to Dashboard
+</a>
+
   </div>
 </div>
 {% endblock %}

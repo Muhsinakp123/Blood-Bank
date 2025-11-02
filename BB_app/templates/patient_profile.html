@@ -1,34 +1,32 @@
 {% extends 'master.html' %}
 
-{% block title %}Donor Profile{% endblock %}
+{% block title %}Patient Profile{% endblock %}
 
 {% block content %}
 <div class="donor-profile container py-5">
   <div class="profile-card">
     <div class="profile-header">
-      <h2>👤 Donor Profile</h2>
+      <h2>🩺 Patient Profile</h2>
     </div>
 
     <form method="POST" enctype="multipart/form-data" class="profile-form">
       {% csrf_token %}
-      {{ form.as_p }}
+      {{ patientform.as_p }}
 
       <!-- Button Row -->
       <div class="button-row">
         <button type="submit" class="btn-save">💾 Update</button>
-        <a href="{% url 'donor_profile_delete' donor.id %}" class="btn_delete" onclick="return confirmDelete();">🗑 Delete</a>
-
+        <a href="{% url 'patient_profile_delete' patient.id %}" class="btn_delete" onclick="return confirmDelete();">🗑 Delete</a>
       </div>
 
-      <a href="{% url 'donor_dashboard' %}" class="back-btn">← Back to Dashboard</a>
+      <a href="{% url 'patient_dashboard' %}" class="back-btn">← Back to Dashboard</a>
     </form>
   </div>
 </div>
 
 <script>
   function confirmDelete() {
-    return confirm("⚠️ Are you sure you want to delete your donor profile?");
+    return confirm("⚠️ Are you sure you want to delete your patient profile?");
   }
 </script>
-
 {% endblock %}

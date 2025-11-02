@@ -107,7 +107,8 @@ class HospitalProfile(models.Model):
     
 # ------------------ Blood Stock ------------------
 class BloodStock(models.Model):
-    hospital = models.ForeignKey(HospitalProfile, on_delete=models.CASCADE, related_name="blood_stocks")
+    units = models.PositiveIntegerField(default=0)
+    hospital = models.ForeignKey(HospitalProfile, on_delete=models.CASCADE, null=True, blank=True)
     blood_group = models.CharField(max_length=3, choices=[
         ('A+', 'A+'), ('A-', 'A-'),
         ('B+', 'B+'), ('B-', 'B-'),
@@ -186,11 +187,6 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.title} - {self.hospital.hospital_name}"
 
-class DonorAppointmentRequest(models.Model):
-    donor = models.ForeignKey(User, on_delete=models.CASCADE)
-    responses = models.JSONField()
-    submitted_on = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(default='Pending', max_length=20)
 
 class DonorAppointmentRequest(models.Model):
     donor = models.ForeignKey(User, on_delete=models.CASCADE)

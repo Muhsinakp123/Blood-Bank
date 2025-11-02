@@ -1,0 +1,79 @@
+{% extends "master.html" %}
+{% load static %}
+{% block title %}Search Blood Availability{% endblock %}
+{% block content %}
+
+<div class="appointment-form">
+  <div class="form-card">
+    <div class="form-header text-center mb-4">
+      <h2>Search Blood Availability</h2>
+      <p>Find available blood by group, location, or hospital.</p>
+    </div>
+
+    <form method="get" action="{% url 'search_blood' %}" class="profile-form">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="blood_group">Blood Group</label>
+          <select name="blood_group" id="blood_group">
+            <option value="">-- Select --</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="location">Location</label>
+          <input type="text" name="location" id="location" placeholder="Enter location" />
+        </div>
+
+        <div class="col-md-4">
+          <label for="hospital">Hospital</label>
+          <input type="text" name="hospital" id="hospital" placeholder="Enter hospital name" />
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <button type="submit" class="btn-save" style="width: 200px;">Search</button>
+      </div>
+    </form>
+
+    {% if blood_stocks %}
+    <div class="table-responsive mt-5">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Hospital</th>
+            <th>Location</th>
+            <th>Blood Group</th>
+            <th>Units Available</th>
+            <th>Contact</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for stock in blood_stocks %}
+          <tr>
+            <td>{{ stock.hospital.name }}</td>
+            <td>{{ stock.hospital.location }}</td>
+            <td>{{ stock.blood_group }}</td>
+            <td>{{ stock.units_available }}</td>
+            <td>{{ stock.hospital.contact_number }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">No matching blood units found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'master.html' %}
-{% block title %}Hospital Add Stock{% endblock %}
+{% block title %}Add Blood Stock{% endblock %}
 
 {% block content %}
 <div class="hospital-add-stock">
@@ -11,7 +11,7 @@
       {{ form.as_p }}
       <div class="button-group">
         <button type="submit" class="btn-add">➕ Add Stock</button>
-        <a href="{% url 'hospital_dashboard' %}" class="btn-cancel">← Cancel</a>
+        <a href="{% url cancel_url %}" class="btn-cancel">← Cancel</a>
       </div>
     </form>
   </div>

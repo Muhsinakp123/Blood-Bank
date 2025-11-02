@@ -9,6 +9,8 @@ from .models import HospitalProfile, BloodStock, BloodRequest,BloodDonation,Noti
 from .forms import BloodStockForm, BloodRequestForm
 from .models import DonorAppointmentRequest
 from .forms import DonorAppointmentRequestForm
+from django.contrib.auth.decorators import user_passes_test
+from django.db.models import Sum
 import io
 import base64
 from matplotlib import pyplot as plt
@@ -187,19 +189,24 @@ def hospital_dashboard(request):
 
 # 📊 Stock (Pie Chart)
 @login_required
-def hospital_stock(request):
-    hospital = get_object_or_404(HospitalProfile, user=request.user)
+def hospital_stock(request, id=None):
+    # If admin is viewing a specific hospital’s stock
+    if request.user.is_superuser and id:
+        hospital = get_object_or_404(HospitalProfile, id=id)
+        is_admin_view = True
+    else:
+        # Hospital user viewing their own stock
+        hospital = get_object_or_404(HospitalProfile, user=request.user)
+        is_admin_view = False
+
     blood_stocks = BloodStock.objects.filter(hospital=hospital)
 
-    # 🔹 Combine duplicates by blood group
+    # Combine duplicates by blood group
     stock_summary = {}
     for stock in blood_stocks:
-        if stock.blood_group in stock_summary:
-            stock_summary[stock.blood_group] += stock.units_available
-        else:
-            stock_summary[stock.blood_group] = stock.units_available
+        stock_summary[stock.blood_group] = stock_summary.get(stock.blood_group, 0) + stock.units_available
 
-    # Prepare data for chart
+    # Prepare chart data
     labels = list(stock_summary.keys())
     values = list(stock_summary.values())
 
@@ -217,14 +224,20 @@ def hospital_stock(request):
     return render(request, 'hospital_stock.html', {
         'hospital': hospital,
         'blood_stocks': blood_stocks,
-        'chart_image': chart_image
+        'chart_image': chart_image,
+        'is_admin_view': is_admin_view  # this flag controls the back button
     })
-
 
 # ➕ Add Stock
 @login_required
 def add_stock(request):
-    hospital = get_object_or_404(HospitalProfile, user=request.user)
+    # detect if admin is adding stock
+    is_admin = request.user.is_superuser
+
+    # if hospital user, get hospital profile
+    hospital = None
+    if not is_admin:
+        hospital = get_object_or_404(HospitalProfile, user=request.user)
 
     if request.method == 'POST':
         form = BloodStockForm(request.POST)
@@ -232,29 +245,42 @@ def add_stock(request):
             blood_group = form.cleaned_data['blood_group']
             units = form.cleaned_data['units_available']
 
-            #  Check if this blood group already exists for the hospital
-            existing_stock = BloodStock.objects.filter(hospital=hospital, blood_group=blood_group).first()
+            if is_admin:
+                # --- Admin: Update global stock ---
+                stock, created = BloodStock.objects.get_or_create(
+                    hospital=None,  # admin’s stock not linked to a hospital
+                    blood_group=blood_group,
+                    defaults={'units_available': 0}
+                )
+                stock.units_available += units
+                stock.save()
+                messages.success(request, f"{units} units added to admin stock for {blood_group}.")
+                return redirect('manage_stock')
 
-            if existing_stock:
-                #  Update existing stock
-                existing_stock.units_available += units
-                existing_stock.save()
-                messages.success(request, f"{units} units added to existing stock of {blood_group}.")
             else:
-                #  Create new stock record
-                new_stock = form.save(commit=False)
-                new_stock.hospital = hospital
-                new_stock.save()
-                messages.success(request, f"New blood group {blood_group} added with {units} units.")
+                # --- Hospital: Update hospital-specific stock ---
+                existing_stock = BloodStock.objects.filter(hospital=hospital, blood_group=blood_group).first()
+                if existing_stock:
+                    existing_stock.units_available += units
+                    existing_stock.save()
+                    messages.success(request, f"{units} units added to existing stock of {blood_group}.")
+                else:
+                    new_stock = form.save(commit=False)
+                    new_stock.hospital = hospital
+                    new_stock.save()
+                    messages.success(request, f"New blood group {blood_group} added with {units} units.")
+                return redirect('hospital_stock', id=hospital.id)
 
-            return redirect('hospital_stock')
 
     else:
         form = BloodStockForm()
 
-    return render(request, 'add_stock.html', {'form': form})
-
-
+    # Pass cancel redirect based on user type
+    cancel_url = 'manage_stock' if is_admin else 'hospital_dashboard'
+    return render(request, 'add_stock.html', {
+        'form': form,
+        'cancel_url': cancel_url
+    })
 
 # 🩸 Request Blood
 @login_required
@@ -349,10 +375,6 @@ def delete_camp(request, id):
     camp.delete()
     return redirect('blood_camp')
 
-
-def patient_dashboard(request):
-    return render(request,'patient_dashboard.html')
-
 @login_required
 def donor_dashboard(request):
     donor = DonorProfile.objects.get(user=request.user)
@@ -360,10 +382,32 @@ def donor_dashboard(request):
 
 @login_required
 def donor_profile(request):
-    donor = DonorProfile.objects.get(user=request.user)
-    return render(request, 'donor_profile.html', {'donor': donor})
+    donor = get_object_or_404(DonorProfile, user=request.user)  # Fetch donor profile
+
+    if request.method == 'POST':
+        form = DonorForm(request.POST, request.FILES, instance=donor)
+        if form.is_valid():
+            # If profile picture not included, old one remains unchanged
+            form.save(commit=False)
+            form.instance.profile_pic = donor.profile_pic  # preserve old profile picture
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('donor_dashboard')  # Redirect to the donor dashboard after update
+    else:
+        form = DonorForm(instance=donor)  # Prepopulate the form with donor data
+
+    return render(request, 'donor_profile.html', {'form': form, 'donor': donor})
 
 
+@login_required
+def donor_profile_delete(request, donor_id):
+    donor = get_object_or_404(DonorProfile, id=donor_id)
+
+    if request.method == 'POST':
+        donor.delete()
+        return redirect('donor_dashboard') 
+
+    return render(request, 'confirm_delete.html', {'donor': donor})
 
 @login_required
 def donor_appoinment(request):
@@ -482,9 +526,6 @@ def hospital_form(request):
     return render(request, 'hospital_form.html', {'form': form})
 
 
-@login_required
-def admin_dashboard(request):
-    return render(request,'admin_dashboard.html')
 
 @login_required
 def blood_camp(request):
@@ -526,3 +567,145 @@ def generate_report(request):
     donations = BloodDonation.objects.select_related('donor', 'patient').all()
 
     return render(request, 'generate_report.html', {'donations': donations})
+
+
+@login_required
+def patient_dashboard(request):
+    patient = get_object_or_404(PatientProfile, user=request.user)
+    blood_requests = BloodRequest.objects.filter(patient_name=patient.full_name).order_by('-request_date')
+    
+    return render(request, 'patient_dashboard.html', {
+        'patient': patient,
+        'blood_requests': blood_requests
+    })
+
+@login_required
+def search_blood(request):
+    query = request.GET.get('q', '')
+    location = request.GET.get('location', '')
+    blood_group = request.GET.get('blood_group', '')
+    
+    hospitals = HospitalProfile.objects.all()
+    blood_stocks = BloodStock.objects.all()
+    
+    if blood_group:
+        blood_stocks = blood_stocks.filter(blood_group=blood_group)
+    if location:
+        hospitals = hospitals.filter(location__icontains=location)
+        blood_stocks = blood_stocks.filter(hospital__in=hospitals)
+    
+    context = {
+        'blood_stocks': blood_stocks,
+        'query': query,
+        'location': location,
+        'blood_group': blood_group,
+    }
+    return render(request, 'search_blood.html', context)
+
+@login_required
+def patient_blood_request(request):
+    patient = get_object_or_404(PatientProfile, user=request.user)
+
+    if request.method == 'POST':
+        form = BloodRequestForm(request.POST)
+        if form.is_valid():
+            blood_request = form.save(commit=False)
+            # Link to a default hospital or allow patient to select one
+            hospital = HospitalProfile.objects.first()
+            blood_request.hospital = hospital
+            blood_request.patient_name = patient.full_name
+            blood_request.save()
+            messages.success(request, "Your blood request has been submitted successfully!")
+            return redirect('track_request')
+    else:
+        form = BloodRequestForm()
+
+    return render(request, 'patient_blood_request.html', {'form': form})
+
+@login_required
+def track_request(request):
+    patient = get_object_or_404(PatientProfile, user=request.user)
+    requests = BloodRequest.objects.filter(patient_name=patient.full_name).order_by('-request_date')
+    return render(request, 'track_request.html', {'requests': requests})
+
+@login_required
+def received_history(request):
+    patient = get_object_or_404(PatientProfile, user=request.user)
+    received = BloodDonation.objects.filter(patient=patient).order_by('-date_donated')
+    return render(request, 'received_history.html', {'received': received})
+
+@login_required
+def patient_profile(request):
+    patient = get_object_or_404(PatientProfile, user=request.user)
+
+    if request.method == 'POST':
+        patientform = PatientForm(request.POST, request.FILES, instance=patient)
+        if patientform.is_valid():
+            patientform.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('patient_profile')
+    else:
+        patientform = PatientForm(instance=patient)
+
+    return render(request, 'patient_profile.html', {'patientform': patientform, 'patient': patient})
+
+@login_required
+def patient_profile_delete(request, id):
+    patient = get_object_or_404(PatientProfile, id=id)
+    patient.delete()
+    messages.warning(request, 'Your profile has been deleted.')
+    return redirect('home')  # or any other page you prefer
+
+
+from django.contrib.auth.decorators import user_passes_test
+from django.db.models import Sum
+
+# ✅ Restrict access to superusers only
+def admin_required(view_func):
+    return user_passes_test(lambda u: u.is_superuser, login_url='login')(view_func)
+
+@admin_required
+def admin_dashboard(request):
+    total_donors = DonorProfile.objects.count()
+    total_hospitals = HospitalProfile.objects.count()
+    total_requests = BloodRequest.objects.count()
+    total_stock_units = BloodStock.objects.aggregate(total=Sum('units_available'))['total'] or 0
+
+    return render(request, 'admin_dashboard.html', {
+        'total_donors': total_donors,
+        'total_hospitals': total_hospitals,
+        'total_requests': total_requests,
+        'total_stock_units': total_stock_units,
+    })
+
+@admin_required
+def view_users(request):
+    hospitals = HospitalProfile.objects.all()
+    donors = DonorProfile.objects.all()
+    patients = PatientProfile.objects.all()
+
+    return render(request, 'view_users.html', {
+        'hospitals': hospitals,
+        'donors': donors,
+        'patients': patients
+    })
+
+@admin_required
+def manage_stock(request):
+    stocks = BloodStock.objects.select_related('hospital').all().order_by('hospital__hospital_name')
+    return render(request, 'manage_stock.html', {'stocks': stocks})
+
+@admin_required
+def admin_hospital_stock(request):
+    hospitals = HospitalProfile.objects.all()
+    return render(request, 'admin_hospital_stock.html', {'hospitals': hospitals})
+
+@admin_required
+def view_reports(request):
+    donations = BloodDonation.objects.select_related('donor', 'patient', 'hospital').all()
+    return render(request, 'view_reports.html', {'donations': donations})
+
+@login_required
+def manage_stock(request):
+    stocks = BloodStock.objects.filter(hospital__isnull=True)
+    return render(request, 'manage_stock.html', {'stocks': stocks})
