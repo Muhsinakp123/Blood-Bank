@@ -3,9 +3,30 @@
 
 {% block content %}
 <div class="dashboard-header">
-          <h2>{% block header_title %}Dashboard Overview{% endblock %}</h2>
-          <i class="fa fa-user-circle"></i>
+  <h2>{% block header_title %}Dashboard Overview{% endblock %}</h2>
+
+  <div class="header-icons">
+    <!-- 🔔 Notification Icon (clickable) -->
+    <a href="{% url 'notifications' %}" class="notification-icon">
+      <i class="fa fa-bell"></i>
+      {% if notification_count and notification_count > 0 %}
+      <span class="notif-badge">{{ notification_count }}</span>
+      {% endif %}
+    </a>
+
+    <!-- 👤 Profile Dropdown -->
+    <div class="profile-dropdown">
+      <i class="fa fa-user-circle"></i>
+      <div class="dropdown-content">
+        <p><strong>{{ request.user.username }}</strong></p>
+        <p class="email">{{ request.user.email }}</p>
       </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="welcome-box text-center mt-4 mb-4">
     <h3>Welcome, <span class="username">{{ request.user.username }}</span></h3>
 </div>

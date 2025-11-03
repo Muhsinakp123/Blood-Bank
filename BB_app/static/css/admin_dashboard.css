@@ -446,4 +446,139 @@ body {
 }
 
 
+/* ================================
+   Header Icons Layout
+================================ */
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
 
+/* 🔔 Notification Icon */
+.notification-icon {
+  position: relative;
+  cursor: pointer;
+  color: #fff;
+  font-size: 24px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.notification-icon:hover {
+  transform: scale(1.1);
+  color: #ffeaea;
+}
+
+/* Red Badge for Notification Count */
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background-color: #ff4d4d;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 50%;
+  padding: 2px 5px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* 👤 Profile Dropdown (already exists) */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.profile-dropdown i {
+  font-size: 28px;
+  color: #fff;
+  transition: transform 0.3s ease;
+}
+
+.profile-dropdown:hover i {
+  transform: scale(1.1);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background-color: #fff;
+  min-width: 220px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  text-align: left;
+  padding: 15px;
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+.profile-dropdown:hover .dropdown-content {
+  display: block;
+}
+/* Dropdown text styles */
+.dropdown-content p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.dropdown-content .email {
+  color: #666;
+  font-size: 13px;
+}
+
+/* ==========================
+   Notifications Page
+========================== */
+.notification-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 25px;
+}
+
+.notification-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-left: 6px solid #b30000;
+  transition: all 0.3s ease;
+}
+
+.notification-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(179, 0, 0, 0.2);
+}
+
+.notification-card.emergency {
+  border-left: 6px solid #ff1a1a;
+  background: #fff0f0;
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notif-header h5 {
+  color: #b30000;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.notif-date {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.notification-card p {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

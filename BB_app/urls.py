@@ -40,6 +40,8 @@ urlpatterns = [
 
 
     path('view/hospital/', views.view_hospital, name='view_hospital'),
+    path('notifications/', views.notifications, name='notifications'),
+
     
     
     path('donor_dashboard/',views.donor_dashboard,name='donor_dashboard'),

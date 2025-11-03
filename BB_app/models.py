@@ -177,15 +177,31 @@ class BloodDonationCamp(models.Model):
     def __str__(self):
         return f"{self.camp_name} ({self.hospital.hospital_name})"
     
+# models.py
+from django.contrib.auth.models import User
+
 class Notification(models.Model):
-    hospital = models.ForeignKey(HospitalProfile, on_delete=models.CASCADE, related_name='notifications')
     title = models.CharField(max_length=150)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 
+    # Who this notification is meant for:
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    role = models.CharField(
+        max_length=20,
+        choices=[
+            ('admin', 'Admin'),
+            ('hospital', 'Hospital'),
+            ('donor', 'Donor'),
+            ('patient', 'Patient'),
+        ],
+        default='admin'
+    )
+
     def __str__(self):
-        return f"{self.title} - {self.hospital.hospital_name}"
+        return f"{self.role.title()} - {self.title}"
+
 
 
 class DonorAppointmentRequest(models.Model):

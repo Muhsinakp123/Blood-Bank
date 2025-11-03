@@ -15,6 +15,8 @@ import io
 import base64
 from matplotlib import pyplot as plt
 
+from django.db.models import Q
+
 # --- Home Page ---
 def home(request):
     return render(request, 'home.html')
@@ -179,7 +181,10 @@ def reset_password(request, user_id):
 @login_required
 def hospital_dashboard(request):
     hospital = get_object_or_404(HospitalProfile, user=request.user)
-    notifications = Notification.objects.filter(hospital=hospital).order_by('-created_at')[:5]
+    notifications = Notification.objects.filter(
+    models.Q(role='hospital') | models.Q(recipient=request.user)
+).order_by('-created_at')[:5]
+
     return render(request, 'hospital_dashboard.html', {
         'hospital': hospital,
         'notifications': notifications
@@ -296,20 +301,23 @@ def request_blood(request):
 
             # ✅ Emergency check
             if req.is_emergency:
-                Notification.objects.create(
-                    hospital=hospital,
-                    title="🚨 Emergency Blood Request!",
-                    message=f"⚠️ EMERGENCY: {req.patient_name} needs {req.units_requested} units of {req.blood_group} urgently!",
-                )
+               Notification.objects.create(
+                   role='admin',
+                   title="🚨 Emergency Blood Request!",
+                   message=f"{hospital.hospital_name} raised an emergency request for {req.blood_group}.",
+                   )
+               Notification.objects.create(
+                   role='donor',
+                   title="🚨 Urgent Blood Needed!",
+                   message=f"{req.units_requested} units of {req.blood_group} needed at {hospital.hospital_name}.",
+                   )
             else:
                 Notification.objects.create(
-                    hospital=hospital,
+                    recipient=request.user,
+                    role='hospital',
                     title="Blood Request Submitted",
-                    message=f"You have requested {req.units_requested} units of {req.blood_group} for patient {req.patient_name}.",
-                )
-
-            messages.success(request, "Blood request submitted successfully!")
-            return redirect('hospital_dashboard')
+                    message=f"You requested {req.units_requested} units of {req.blood_group} for {req.patient_name}.",
+                    )
 
     else:
         form = BloodRequestForm()
@@ -378,7 +386,9 @@ def delete_camp(request, id):
 @login_required
 def donor_dashboard(request):
     donor = DonorProfile.objects.get(user=request.user)
-    return render(request, 'donor_dashboard.html', {'donor': donor})
+    notifications = Notification.objects.filter(role='donor').order_by('-created_at')[:5]
+    return render(request, 'donor_dashboard.html', {'donor': donor, 'notifications': notifications})
+
 
 @login_required
 def donor_profile(request):
@@ -544,11 +554,15 @@ def create_camp(request):
             camp.save()
             messages.success(request, "Blood donation camp created successfully!")
             Notification.objects.create(
-                hospital=hospital,
-                title="New Blood Donation Camp Created",
-                message=f"The camp '{camp.camp_name}' has been scheduled on {camp.date} at {camp.venue}."
+                role='admin',
+                title="🩸 New Blood Donation Camp",
+                message=f"{hospital.hospital_name} scheduled '{camp.camp_name}' on {camp.date} at {camp.venue}."
                 )
-
+            Notification.objects.create(
+                role='donor',
+                title="🩸 New Donation Camp!",
+                message=f"Join the camp '{camp.camp_name}' on {camp.date} at {camp.venue} organized by {hospital.hospital_name}."
+                )
             return redirect('blood_camp')
     else:
         form = BloodDonationCampForm()
@@ -572,12 +586,17 @@ def generate_report(request):
 @login_required
 def patient_dashboard(request):
     patient = get_object_or_404(PatientProfile, user=request.user)
+    notifications = Notification.objects.filter(
+        models.Q(role='patient') | models.Q(recipient=request.user)
+    ).order_by('-created_at')[:5]
     blood_requests = BloodRequest.objects.filter(patient_name=patient.full_name).order_by('-request_date')
-    
+
     return render(request, 'patient_dashboard.html', {
         'patient': patient,
-        'blood_requests': blood_requests
+        'blood_requests': blood_requests,
+        'notifications': notifications
     })
+
 
 @login_required
 def search_blood(request):
@@ -664,6 +683,8 @@ from django.db.models import Sum
 def admin_required(view_func):
     return user_passes_test(lambda u: u.is_superuser, login_url='login')(view_func)
 
+from .models import Notification
+
 @admin_required
 def admin_dashboard(request):
     total_donors = DonorProfile.objects.count()
@@ -671,12 +692,18 @@ def admin_dashboard(request):
     total_requests = BloodRequest.objects.count()
     total_stock_units = BloodStock.objects.aggregate(total=Sum('units_available'))['total'] or 0
 
+    # Count unread notifications for admin
+    notification_count = Notification.objects.filter(role='admin', is_read=False).count()
+
     return render(request, 'admin_dashboard.html', {
         'total_donors': total_donors,
         'total_hospitals': total_hospitals,
         'total_requests': total_requests,
         'total_stock_units': total_stock_units,
+        'notification_count': notification_count,
     })
+
+
 
 @admin_required
 def view_users(request):
@@ -709,3 +736,23 @@ def view_reports(request):
 def manage_stock(request):
     stocks = BloodStock.objects.filter(hospital__isnull=True)
     return render(request, 'manage_stock.html', {'stocks': stocks})
+
+@login_required
+def notifications(request):
+    user = request.user
+
+    # Determine role
+    user_role = user.profile.role if hasattr(user, 'profile') else 'admin'
+
+    # Get all notifications for this user or their role
+    notifications = Notification.objects.filter(
+        Q(recipient=user) | Q(role=user_role)
+    ).order_by('-created_at')
+
+    # Mark unread ones as read
+    Notification.objects.filter(
+        Q(recipient=user) | Q(role=user_role), is_read=False
+    ).update(is_read=True)
+
+    return render(request, 'notifications.html', {'notifications': notifications})
+

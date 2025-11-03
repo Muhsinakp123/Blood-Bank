@@ -30,7 +30,7 @@
       <a href="{% url 'view_reports' %}" class="{% if request.path == '/view_reports/' %}active{% endif %}">
           <i class="fa fa-chart-bar"></i> Reports
       </a>
-      <a href="{% url 'logout' %}">
+      <a href="{% url 'logout' %}" onclick="confirmLogout(event)">
           <i class="fa fa-sign-out-alt"></i> Logout
       </a>
   </div>
@@ -47,6 +47,15 @@
   </div>
 
 </div>
+<script>
+      // Logout confirmation
+  function confirmLogout(event) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to logout?")) {
+      window.location.href = "{% url 'logout' %}";
+    }
+  }
+</script>
 
 </body>
 </html>

@@ -1,0 +1,25 @@
+{% extends 'admin_master.html' %}
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <h2>Notifications</h2>
+  <i class="fa fa-bell"></i>
+</div>
+
+<div class="notification-container mt-4">
+  {% if notifications %}
+    {% for notif in notifications %}
+      <div class="notification-card {% if 'EMERGENCY' in notif.title %}emergency{% else %}normal{% endif %}">
+        <div class="notif-header">
+          <h5>{{ notif.title }}</h5>
+          <span class="notif-date">{{ notif.created_at|date:"M d, Y - H:i" }}</span>
+        </div>
+        <p>{{ notif.message }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-center mt-4 text-muted">No notifications available.</p>
+  {% endif %}
+</div>
+{% endblock %}
