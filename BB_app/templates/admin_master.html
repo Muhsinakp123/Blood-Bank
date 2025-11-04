@@ -18,6 +18,9 @@
       <a href="{% url 'admin_dashboard' %}" class="{% if request.path == '/admin_dashboard/' %}active{% endif %}">
           <i class="fa fa-home"></i> Dashboard
       </a>
+      <a href="{% url 'manage_request' %}" class="{% if request.path == '/manage_request/' %}active{% endif %}">
+          <i class="fa fa-envelope-open-text"></i> manage Request
+
       <a href="{% url 'view_users' %}" class="{% if request.path == '/view_users/' %}active{% endif %}">
           <i class="fa fa-users"></i> View Users
       </a>

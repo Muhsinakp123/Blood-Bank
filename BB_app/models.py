@@ -181,26 +181,27 @@ class BloodDonationCamp(models.Model):
 from django.contrib.auth.models import User
 
 class Notification(models.Model):
-    title = models.CharField(max_length=150)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=False)
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('donor', 'Donor'),
+        ('hospital', 'Hospital'),
+        ('patient', 'Patient'),
+    ]
 
-    # Who this notification is meant for:
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    role = models.CharField(
-        max_length=20,
-        choices=[
-            ('admin', 'Admin'),
-            ('hospital', 'Hospital'),
-            ('donor', 'Donor'),
-            ('patient', 'Patient'),
-        ],
-        default='admin'
-    )
+
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # optional (for emergency style alert)
+    type = models.CharField(max_length=20, default='info')  
+    # e.g. 'info', 'warning', 'emergency', 'success'
 
     def __str__(self):
-        return f"{self.role.title()} - {self.title}"
+        return f"{self.role} - {self.title}"
 
 
 

@@ -11,26 +11,41 @@
       <p>Manage your blood stock and requests efficiently.</p>
     </div>
 
-    <div class="dropdown">
-      {% if hospital.Hospital_Logo %}
-      <img src="{{ hospital.Hospital_Logo.url }}" alt="Hospital Logo" class="hospital-logo" id="logoDropdown"
-        onclick="toggleDropdown()" />
-      {% else %}
-      <img src="{% static 'images/default_logo.png' %}" alt="Default Logo" class="hospital-logo" id="logoDropdown"
-        onclick="toggleDropdown()" />
-      {% endif %}
+    <div class="header-right">
+      <div class="position-relative">
+        <a href="{% url 'notifications' %}" class="text-decoration-none text-danger">
+          <i class="fa fa-bell fa-lg"></i>
+          {% if unread_count > 0 %}
+          <span class="notif-badge">
+  {{ unread_count }}
+</span>
 
-      <ul class="custom-dropdown shadow" id="dropdownMenu">
-        <li><a href="{% url 'hospital_profile_view' %}"><i class="fas fa-user me-2"></i> Profile</a></li>
-        <li>
-          <hr>
-        </li>
-        <li><a href="#" class="text-danger" onclick="confirmLogout(event)">
-            <i class="fas fa-sign-out-alt me-2"></i> Logout
-          </a></li>
-      </ul>
+          {% endif %}
+        </a>
+      </div>
+
+      <div class="dropdown">
+        {% if hospital.Hospital_Logo %}
+        <img src="{{ hospital.Hospital_Logo.url }}" alt="Hospital Logo" class="hospital-logo" id="logoDropdown"
+          onclick="toggleDropdown()" />
+        {% else %}
+        <img src="{% static 'images/default_logo.png' %}" alt="Default Logo" class="hospital-logo" id="logoDropdown"
+          onclick="toggleDropdown()" />
+        {% endif %}
+
+        <ul class="custom-dropdown shadow" id="dropdownMenu">
+          <li><a href="{% url 'hospital_profile_view' %}"><i class="fas fa-user me-2"></i> Profile</a></li>
+          <li>
+            <hr>
+          </li>
+          <li><a href="#" class="text-danger" onclick="confirmLogout(event)">
+              <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a></li>
+        </ul>
+      </div>
     </div>
   </div>
+
 
   <!-- Dashboard Action Cards -->
 
@@ -42,19 +57,19 @@
     </a>
 
 
-   {% if hospital %}
-  <a href="{% url 'hospital_stock' hospital.id %}" class="hosp-card">
-    <i class="fas fa-chart-line"></i>
-    <h4>View Stock</h4>
-    <p>Check your current blood stock levels.</p>
-  </a>
-{% else %}
-  <a href="#" class="hosp-card disabled" style="pointer-events: none; opacity: 0.6;">
-    <i class="fas fa-chart-line"></i>
-    <h4>View Stock</h4>
-    <p>No hospital profile linked to this account.</p>
-  </a>
-{% endif %}
+    {% if hospital %}
+    <a href="{% url 'hospital_stock' hospital.id %}" class="hosp-card">
+      <i class="fas fa-chart-line"></i>
+      <h4>View Stock</h4>
+      <p>Check your current blood stock levels.</p>
+    </a>
+    {% else %}
+    <a href="#" class="hosp-card disabled" style="pointer-events: none; opacity: 0.6;">
+      <i class="fas fa-chart-line"></i>
+      <h4>View Stock</h4>
+      <p>No hospital profile linked to this account.</p>
+    </a>
+    {% endif %}
 
 
 
@@ -83,28 +98,6 @@
     </a>
 
 
-  </div>
-
-  <div class="notification-module">
-    <h3><i class="fas fa-bell"></i> Notifications</h3>
-    <p>Stay updated with important alerts and reminders.</p>
-
-    {% if notifications %}
-    <div class="notification-list">
-      {% for n in notifications %}
-      <div class="notification-item {% if not n.is_read %}unread{% endif %}">
-        <i class="fas fa-circle"></i>
-        <div>
-          <h4>{{ n.title }}</h4>
-          <p>{{ n.message }}</p>
-          <small>{{ n.created_at|date:"M d, Y h:i A" }}</small>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <p>No notifications yet.</p>
-    {% endif %}
   </div>
 
 </div>

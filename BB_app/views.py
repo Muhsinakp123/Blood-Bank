@@ -11,6 +11,8 @@ from .models import DonorAppointmentRequest
 from .forms import DonorAppointmentRequestForm
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Sum
+from django.db import models
+from datetime import date
 import io
 import base64
 from matplotlib import pyplot as plt
@@ -181,14 +183,44 @@ def reset_password(request, user_id):
 @login_required
 def hospital_dashboard(request):
     hospital = get_object_or_404(HospitalProfile, user=request.user)
+    today = date.today()
+
+    upcoming_camps = BloodDonationCamp.objects.filter(hospital=hospital, date__gte=today)
+    for camp in upcoming_camps:
+        days_left = (camp.date - today).days
+        if 0 < days_left <= 2:
+            already_notified_today = Notification.objects.filter(
+                recipient=request.user,
+                title="Upcoming Blood Donation Camp",
+                message__icontains=camp.camp_name,
+                created_at__date=date.today()
+            ).exists()
+
+            if not already_notified_today:
+                Notification.objects.create(
+                    recipient=request.user,
+                    title="Upcoming Blood Donation Camp",
+                    message=f"Your camp '{camp.camp_name}' is scheduled for {camp.date}. Please prepare accordingly.",
+                    role="hospital",
+                )
+
+    # Latest notifications
     notifications = Notification.objects.filter(
-    models.Q(role='hospital') | models.Q(recipient=request.user)
-).order_by('-created_at')[:5]
+        Q(role='hospital') | Q(recipient=request.user)
+    ).order_by('-created_at')[:5]
+
+    # Count unread
+    unread_count = Notification.objects.filter(
+        Q(role='hospital') | Q(recipient=request.user),
+        is_read=False
+    ).count()
 
     return render(request, 'hospital_dashboard.html', {
         'hospital': hospital,
-        'notifications': notifications
+        'notifications': notifications,
+        'unread_count': unread_count,
     })
+
 
 
 
@@ -301,24 +333,20 @@ def request_blood(request):
 
             # ✅ Emergency check
             if req.is_emergency:
-               Notification.objects.create(
-                   role='admin',
-                   title="🚨 Emergency Blood Request!",
-                   message=f"{hospital.hospital_name} raised an emergency request for {req.blood_group}.",
-                   )
-               Notification.objects.create(
-                   role='donor',
-                   title="🚨 Urgent Blood Needed!",
-                   message=f"{req.units_requested} units of {req.blood_group} needed at {hospital.hospital_name}.",
-                   )
-            else:
+                # Notify admin and donors only — NOT hospital
                 Notification.objects.create(
-                    recipient=request.user,
-                    role='hospital',
-                    title="Blood Request Submitted",
-                    message=f"You requested {req.units_requested} units of {req.blood_group} for {req.patient_name}.",
-                    )
+                    role='admin',
+                    title="🚨 Emergency Blood Request!",
+                    message=f"{hospital.hospital_name} raised an emergency request for {req.blood_group}.",
+                )
+                Notification.objects.create(
+                    role='donor',
+                    title="🚨 Urgent Blood Needed!",
+                    message=f"{req.units_requested} units of {req.blood_group} needed at {hospital.hospital_name}.",
+                )
 
+            messages.success(request, "Blood request submitted successfully!")
+            return redirect('view_request')
     else:
         form = BloodRequestForm()
 
@@ -755,4 +783,95 @@ def notifications(request):
     ).update(is_read=True)
 
     return render(request, 'notifications.html', {'notifications': notifications})
+@login_required
+def manage_request(request):
+    request_type = request.GET.get('type', None)  # hospital / patient / donor
 
+    hospital_requests = BloodRequest.objects.filter(status='Pending')
+    patient_requests = PatientProfile.objects.all()  # adjust if patients send blood request
+    donor_requests = DonorAppointmentRequest.objects.filter(status='Pending')
+
+    # Default context (only show cards)
+    context = {
+        'show_table': False,
+        'hospital_count': hospital_requests.count(),
+        'patient_count': patient_requests.count(),
+        'donor_count': donor_requests.count(),
+    }
+
+    # If user clicked a card
+    if request_type == 'hospital':
+        context.update({
+            'show_table': True,
+            'table_title': "Hospital Requests",
+            'requests': hospital_requests,
+            'type': 'hospital',
+        })
+    elif request_type == 'donor':
+        context.update({
+            'show_table': True,
+            'table_title': "Donor Requests",
+            'requests': donor_requests,
+            'type': 'donor',
+        })
+    elif request_type == 'patient':
+        context.update({
+            'show_table': True,
+            'table_title': "Patient Requests",
+            'requests': patient_requests,
+            'type': 'patient',
+        })
+
+    return render(request, 'manage_requests.html', context)
+
+
+@login_required
+def approve_request(request,id):
+    blood_request = get_object_or_404(BloodRequest,id=id)
+    blood_request.status = 'Approved'
+    blood_request.save()
+
+    # ✅ Notify the hospital
+    Notification.objects.create(
+        recipient=blood_request.hospital.user,
+        role='hospital',
+        title="Blood Request Approved",
+        message=f"Your blood request for {blood_request.patient_name} ({blood_request.blood_group}) has been approved by Admin."
+    )
+
+    messages.success(request, "Blood request approved successfully.")
+    return redirect('manage_request')
+
+
+@login_required
+def reject_request(request, id):
+    blood_request = get_object_or_404(BloodRequest, id=id)
+    patient_name = blood_request.patient_name
+    blood_group = blood_request.blood_group
+    hospital_user = blood_request.hospital.user
+    blood_request.delete()
+
+    # ✅ Notify the hospital
+    Notification.objects.create(
+        recipient=hospital_user,
+        role='hospital',
+        title="Blood Request Rejected",
+        message=f"Your blood request for {patient_name} ({blood_group}) has been rejected by Admin."
+    )
+
+    messages.warning(request, "Blood request rejected and deleted successfully.")
+    return redirect('manage_request')
+@login_required
+def delete_camp(request, camp_id):
+    camp = get_object_or_404(BloodDonationCamp, id=camp_id, hospital__user=request.user)
+
+    # Delete related notifications
+    Notification.objects.filter(
+        title="Upcoming Blood Donation Camp",
+        message__icontains=camp.camp_name
+    ).delete()
+
+    camp.delete()
+
+    messages.success(request, f"Camp '{camp.camp_name}' and its notifications have been removed.")
+    return redirect('hospital_dashboard')

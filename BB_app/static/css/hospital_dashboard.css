@@ -1321,3 +1321,93 @@ input[type="checkbox"] {
   font-style: italic;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* spacing between bell and logo */
+  position: relative;
+}
+.position-relative {
+  position: relative;
+  display: inline-block;
+}
+
+.position-relative i {
+  font-size: 2rem;
+  color: #8c0000; /* red bell color */
+  transition: transform 0.2s ease;
+}
+
+.position-relative i:hover {
+  transform: scale(1.15);
+}
+
+/* 🔴 Red badge styling */
+.position-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background-color: #dc3545;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 3px 6px;
+  line-height: 1;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  animation: pop 0.3s ease-in-out;
+}
+
+/* Small animation when new notifications appear */
+@keyframes pop {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.notif-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: linear-gradient(135deg, rgba(119, 7, 7, 0.6), rgba(238, 19, 19, 0.6));
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+  border: 2px solid #fff;
+  animation: pulse-glow 1.5s infinite;
+  z-index: 5;
+}
+
+/* 🔥 Smooth glowing pulse animation */
+@keyframes pulse-glow {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.5);
+  }
+}
+
+/* Optional bell hover animation */
+.text-danger:hover .fa-bell {
+  transform: rotate(-10deg);
+  transition: 0.3s ease;
+}

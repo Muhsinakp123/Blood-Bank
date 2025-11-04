@@ -10,6 +10,8 @@
     <div class="welcome-text">
       <h2>Welcome, {{ request.user.username|title }}</h2>
       <p>Manage your blood donation activities and appointments efficiently.</p>
+            <a href="{% url 'donor_notifications' %}"><i class="fa fa-bell"></i></a>
+
     </div>
 
     <div class="dropdown">
@@ -58,18 +60,6 @@
       <i class="fas fa-hand-holding-heart"></i>
       <h4>Camps</h4>
       <p>See upcoming and nearby camps.</p>
-    </a>
-
-    <a href="{% url 'view_hospital' %}" class="hosp-card">
-      <i class="fas fa-hospital"></i>
-      <h4>Hospitals</h4>
-      <p>View and connect with registered hospitals.</p>
-    </a>
-
-    <a href="{% url 'donor_notifications' %}" class="hosp-card">
-      <i class="fas fa-bell"></i>
-      <h4>Notifications</h4>
-      <p>Stay informed with updates from admin and hospitals.</p>
     </a>
 
   </div>

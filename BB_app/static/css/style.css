@@ -359,6 +359,7 @@ header {
   padding: 25px;
   transition: 0.3s ease;
   text-align: center;
+  margin-top: 40px;
 }
 
 .card:hover {
@@ -373,6 +374,7 @@ header {
 .card h3 {
   color: #b30000;
   margin-bottom: 10px;
+
 }
 
 .card p {

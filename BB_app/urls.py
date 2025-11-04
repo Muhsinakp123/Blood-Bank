@@ -59,6 +59,10 @@ urlpatterns = [
     path('manage_stock/', views.manage_stock, name='manage_stock'),
     path('admin_hospital_stock/', views.admin_hospital_stock, name='admin_hospital_stock'),
     path('view_reports/', views.view_reports, name='view_reports'),
+    path('manage_request/', views.manage_request, name='manage_request'),
+    path('approve_request/<int:id>/', views.approve_request, name='approve_request'),
+    path('reject_request/<int:id>/', views.reject_request, name='reject_request'),
+
 
     
         # --- Password Reset ---
