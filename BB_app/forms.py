@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import PatientBloodRequest, Profile
 from .models import BloodStock, BloodRequest
 from .models import Contact
 from .models import DonorProfile, PatientProfile, HospitalProfile
@@ -110,10 +110,9 @@ class PatientForm(forms.ModelForm):
     class Meta:
         model = PatientProfile
         fields = [
-            'full_name', 'age', 'gender', 'blood_group_needed', 'contact_number',
+            'full_name', 'age', 'gender', 'blood_group', 'contact_number',
             'email', 'address',
-            'hospital_name', 'disease_condition', 'units_required',
-            'date_required',
+            'hospital_name', 'disease_condition',
             'notes', 'prescription'
         ]
         widgets = {
@@ -162,7 +161,7 @@ class BloodStockForm(forms.ModelForm):
 class BloodRequestForm(forms.ModelForm):
     class Meta:
         model = BloodRequest
-        fields = ['patient_name', 'blood_group', 'units_requested', 'date_required', 'is_emergency']
+        fields = ['blood_group', 'units_requested', 'date_required', 'is_emergency']
         widgets = {
             'blood_group': forms.Select(choices=[
                 ('A+', 'A+'), ('A-', 'A-'),
@@ -173,6 +172,11 @@ class BloodRequestForm(forms.ModelForm):
             'date_required': forms.DateInput(attrs={'type': 'date'}),
         }
         
+class PatientBloodRequestForm(forms.ModelForm):
+    class Meta:
+        model = PatientBloodRequest
+        fields = ['units_Requested', 'hospital_Name','date_Required', 'is_Emergency']
+        widgets = {'date_Required': forms.DateInput(attrs={'type':'date'})}
 
 
 class BloodDonationCampForm(forms.ModelForm):

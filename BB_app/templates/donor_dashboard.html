@@ -5,33 +5,43 @@
 
 <div class="hospital-dashboard">
 
-  <!-- Header with Welcome and Profile Dropdown -->
+  <!-- Header with Welcome + Notification + Profile -->
   <div class="dashboard-header">
     <div class="welcome-text">
       <h2>Welcome, {{ request.user.username|title }}</h2>
       <p>Manage your blood donation activities and appointments efficiently.</p>
-            <a href="{% url 'donor_notifications' %}"><i class="fa fa-bell"></i></a>
-
     </div>
 
-    <div class="dropdown">
-      {% if donor.profile_pic %}
-      <img src="{{ donor.profile_pic.url }}" alt="Profile Picture" class="hospital-logo" id="logoDropdown"
-        onclick="toggleDropdown()" />
-      {% else %}
-      <img src="{% static 'images/default-profile.png' %}" alt="Default Profile" class="hospital-logo" id="logoDropdown"
-        onclick="toggleDropdown()" />
-      {% endif %}
+    <div class="header-right">
+      <!-- Notification Bell with Count -->
+      <div class="position-relative me-3">
+        <a href="{% url 'notifications' %}" class="text-decoration-none text-danger">
+          <i class="fa fa-bell fa-lg"></i>
+          {% if unread_count > 0 %}
+          <span class="notif-badge">{{ unread_count }}</span>
+          {% endif %}
+        </a>
+      </div>
 
-      <ul class="custom-dropdown shadow" id="dropdownMenu">
-        <li><a href="{% url 'donor_profile' %}"><i class="fas fa-user me-2"></i> Profile</a></li>
-        <li><hr></li>
-        <li>
-          <a href="#" class="text-danger" onclick="confirmLogout(event)">
-            <i class="fas fa-sign-out-alt me-2"></i> Logout
-          </a>
-        </li>
-      </ul>
+      <!-- Profile Dropdown -->
+      <div class="dropdown">
+        {% if donor.profile_pic %}
+        <img src="{{ donor.profile_pic.url }}" alt="Profile Picture" class="hospital-logo" id="logoDropdown"
+          onclick="toggleDropdown()" />
+        {% else %}
+        <i class="fas fa-user-circle profile-icon" id="logoDropdown" onclick="toggleDropdown()"></i>
+        {% endif %}
+
+        <ul class="custom-dropdown shadow" id="dropdownMenu">
+          <li><a href="{% url 'donor_profile' %}"><i class="fas fa-user me-2"></i> Profile</a></li>
+          <li><hr></li>
+          <li>
+            <a href="#" class="text-danger" onclick="confirmLogout(event)">
+              <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -59,13 +69,14 @@
     <a href="{% url 'donor_camp' %}" class="hosp-card">
       <i class="fas fa-hand-holding-heart"></i>
       <h4>Camps</h4>
-      <p>See upcoming and nearby camps.</p>
+      <p>See upcoming and nearby camps are arranged by Hospitals.</p>
     </a>
 
   </div>
 
 </div>
 
+<!-- JS Section -->
 <script>
   // Profile dropdown toggle
   function toggleDropdown() {
@@ -90,5 +101,6 @@
     }
   }
 </script>
+
 
 {% endblock %}

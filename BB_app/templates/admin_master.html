@@ -24,7 +24,7 @@
       <a href="{% url 'view_users' %}" class="{% if request.path == '/view_users/' %}active{% endif %}">
           <i class="fa fa-users"></i> View Users
       </a>
-      <a href="{% url 'manage_stock' %}" class="{% if request.path == '/manage_stock/' %}active{% endif %}">
+      <a href="{% url 'manage_stock_admin' %}" class="{% if request.path == '/manage_stock_admin/' %}active{% endif %}">
           <i class="fa fa-tint"></i> Manage Blood Stock
       </a>
       <a href="{% url 'admin_hospital_stock' %}" class="{% if request.path == '/admin_hospital_stock/' %}active{% endif %}">

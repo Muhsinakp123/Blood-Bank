@@ -62,7 +62,7 @@ class PatientProfile(models.Model):
     full_name = models.CharField(max_length=100)
     age = models.PositiveIntegerField()
     gender = models.CharField(max_length=10, choices=[('Male','Male'),('Female','Female'),('Other','Other')])
-    blood_group_needed = models.CharField(max_length=3, choices=[('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),
+    blood_group = models.CharField(max_length=3, choices=[('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),
                                                                  ('O+','O+'),('O-','O-'),('AB+','AB+'),('AB-','AB-')])
     contact_number = models.CharField(max_length=15)
     email = models.EmailField()
@@ -71,8 +71,6 @@ class PatientProfile(models.Model):
     # Medical Information
     hospital_name = models.CharField(max_length=100, blank=True, null=True)
     disease_condition = models.TextField(blank=True, null=True)
-    units_required = models.PositiveIntegerField()
-    date_required = models.DateField(blank=True, null=True)
     
     # Consent / Notes
     notes = models.TextField(blank=True, null=True)
@@ -125,8 +123,6 @@ class BloodStock(models.Model):
 # ------------------ Blood Request ------------------
 class BloodRequest(models.Model):
     hospital = models.ForeignKey(HospitalProfile, on_delete=models.CASCADE, related_name="blood_requests")
-    patient_name = models.CharField(max_length=100)
-
     blood_group = models.CharField(
         max_length=3,
         choices=[
@@ -152,7 +148,18 @@ class BloodRequest(models.Model):
     status = models.CharField(max_length=10, choices=status_choices, default='Pending')
 
     def __str__(self):
-        return f"{self.patient_name} ({self.status})"
+        return f"{self.status}"
+    
+class PatientBloodRequest(models.Model):
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE)
+    units_Requested = models.PositiveIntegerField()
+    hospital_Name = models.CharField(max_length=40)
+    date_Required = models.DateField()
+    is_Emergency = models.BooleanField(default=False)
+    request_date = models.DateTimeField(auto_now_add=True)
+    status_choices = [('Pending','Pending'),('Approved','Approved'),('Rejected','Rejected')]
+    status = models.CharField(max_length=10, choices=status_choices, default='Pending')
+
     
 class BloodDonation(models.Model):
     donor = models.ForeignKey('DonorProfile', on_delete=models.CASCADE)

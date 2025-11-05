@@ -26,17 +26,20 @@ urlpatterns = [
     path('generate_report/', views.generate_report, name='generate_report'),
     path('create_camp/', views.create_camp, name='create_camp'),
     path('camp/update/<int:id>/', views.update_camp, name='update_camp'),
-    path('camp/delete/<int:id>/', views.delete_camp, name='delete_camp'),
+    path('camp/delete/<int:camp_id>/', views.delete_camp, name='delete_camp'),
     path('mark_notification/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
+     path('manage_stock/', views.manage_stock, name='manage_stock'),
     
     
     path('patient_dashboard/', views.patient_dashboard, name='patient_dashboard'),
     path('patient/search_blood/', views.search_blood, name='search_blood'),
-    path('patient/request_blood/', views.patient_blood_request, name='patient_blood_request'),
+    path('patient/patient_blood_request/', views.patient_blood_request, name='patient_blood_request'),
     path('patient/track_request/', views.track_request, name='track_request'),
     path('patient/received_history/', views.received_history, name='received_history'),
     path('patient/profile/', views.patient_profile, name='patient_profile'),
     path('patient/profile/delete/<int:id>/', views.patient_profile_delete, name='patient_profile_delete'),
+    path('patient/edit_request/<int:request_id>/', views.edit_patient_request, name='edit_patient_request'),
+    path('patient/delete_request/<int:request_id>/', views.delete_patient_request, name='delete_patient_request'),
 
 
     path('view/hospital/', views.view_hospital, name='view_hospital'),
@@ -51,17 +54,16 @@ urlpatterns = [
     path('donor/donation_status/', views.donation_status, name='donation_status'),
     path('donor/donation_history/', views.donation_history, name='donation_history'),
     path('donor/camp/', views.donor_camp, name='donor_camp'),
-    path('donor/notifications/', views.donor_notifications, name='donor_notifications'),
     
     
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('view_users/', views.view_users, name='view_users'),
-    path('manage_stock/', views.manage_stock, name='manage_stock'),
     path('admin_hospital_stock/', views.admin_hospital_stock, name='admin_hospital_stock'),
     path('view_reports/', views.view_reports, name='view_reports'),
     path('manage_request/', views.manage_request, name='manage_request'),
     path('approve_request/<int:id>/', views.approve_request, name='approve_request'),
     path('reject_request/<int:id>/', views.reject_request, name='reject_request'),
+    path('manage_stock/admin/', views.manage_stock_admin, name='manage_stock_admin'),
 
 
     

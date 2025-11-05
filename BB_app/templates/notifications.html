@@ -12,83 +12,86 @@
 
     <ul class="list-group notification-list">
       {% for n in notifications %}
-        <li class="list-group-item d-flex justify-content-between align-items-start p-3 rounded-3 shadow-sm mb-2" style="background-color: #fff; border-left: 5px solid;"">
-          <div>
-            <strong class="d-block mb-1 text-dark">{{ n.title }}</strong>
-            <small class="text-muted">{{ n.message }}</small>
-          </div>
-          <small class="text-secondary">{{ n.created_at|date:"d M Y, H:i" }}</small>
-        </li>
+      <li
+        class="list-group-item p-3 mb-2 rounded-3 shadow-sm 
+      {% if n.type == 'emergency' %}alert-danger{% elif n.type == 'warning' %}alert-warning{% else %}alert-info{% endif %}">
+        <div>
+          <strong>{{ n.title }}</strong>
+          <small class="text-muted d-block">{{ n.message }}</small>
+        </div>
+        <small class="text-secondary">{{ n.created_at|date:"d M Y, H:i" }}</small>
+      </li>
       {% empty %}
-        <li class="list-group-item text-center text-muted py-4 rounded-3 shadow-sm" style="background-color: #fff;">
-          <i class="fa fa-inbox fa-2x mb-2 d-block text-danger"></i>
-          No notifications yet.
-        </li>
+
+      <li class="list-group-item text-center text-muted py-4 rounded-3 shadow-sm" style="background-color: #fff;">
+        <i class="fa fa-inbox fa-2x mb-2 d-block text-danger"></i>
+        No notifications yet.
+      </li>
       {% endfor %}
     </ul>
-      <div class="text-center mt-4">
-  {% if user.is_superuser %}
-    <a href="{% url 'admin_dashboard' %}" class="back-btn">
-      <i class="fa fa-arrow-left"></i> Back to Dashboard
-    </a>
-  {% elif user.hospitalprofile %}
-    <a href="{% url 'hospital_dashboard' %}" class="back-btn">
-      <i class="fa fa-arrow-left"></i> Back to Dashboard
-    </a>
-  {% elif user.donorprofile %}
-    <a href="{% url 'donor_dashboard' %}" class="back-btn">
-      <i class="fa fa-arrow-left"></i> Back to Dashboard
-    </a>
-  {% elif user.patientprofile %}
-    <a href="{% url 'patient_dashboard' %}" class="back-btn">
-      <i class="fa fa-arrow-left"></i> Back to Dashboard
-    </a>
-  {% endif %}
+    <div class="text-center mt-4">
+      {% if user.is_superuser %}
+      <a href="{% url 'admin_dashboard' %}" class="back-btn">
+        <i class="fa fa-arrow-left"></i> Back to Dashboard
+      </a>
+      {% elif user.hospitalprofile %}
+      <a href="{% url 'hospital_dashboard' %}" class="back-btn">
+        <i class="fa fa-arrow-left"></i> Back to Dashboard
+      </a>
+      {% elif user.donorprofile %}
+      <a href="{% url 'donor_dashboard' %}" class="back-btn">
+        <i class="fa fa-arrow-left"></i> Back to Dashboard
+      </a>
+      {% elif user.patientprofile %}
+      <a href="{% url 'patient_dashboard' %}" class="back-btn">
+        <i class="fa fa-arrow-left"></i> Back to Dashboard
+      </a>
+      {% endif %}
+    </div>
+
   </div>
 
 </div>
 
-</div>
-
 <style>
-body {
-  background-color: #f8f9fc;
-}
+  body {
+    background-color: #f8f9fc;
+  }
 
-.card {
-  border: none;
-  background: #fff;
-}
+  .card {
+    border: none;
+    background: #fff;
+  }
 
-.notification-list .list-group-item {
-  border: none;
-  transition: 0.3s;
-  list-style: none;
-}
+  .notification-list .list-group-item {
+    border: none;
+    transition: 0.3s;
+    list-style: none;
+  }
 
-.notification-list .list-group-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
+  .notification-list .list-group-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
 
-/* 🔴 Red Themed Back Button */
-.btn-back-dashboard {
-  background-color: #dc3545;
-  color: #fff;
-  font-weight: 600;
-  border: none;
-  border-radius: 50px;
-  padding: 10px 22px;
-  text-decoration: none;
-  box-shadow: 0 3px 10px rgba(220, 53, 69, 0.4);
-  transition: all 0.3s ease-in-out;
-}
+  /* 🔴 Red Themed Back Button */
+  .btn-back-dashboard {
+    background-color: #dc3545;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 22px;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(220, 53, 69, 0.4);
+    transition: all 0.3s ease-in-out;
+  }
 
-.btn-back-dashboard:hover {
-  background-color: #b52a36;
-  box-shadow: 0 5px 15px rgba(220, 53, 69, 0.6);
-  transform: translateY(-2px);
-  color: #fff;
-}
+  .btn-back-dashboard:hover {
+    background-color: #b52a36;
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.6);
+    transform: translateY(-2px);
+    color: #fff;
+  }
 </style>
 {% endblock %}

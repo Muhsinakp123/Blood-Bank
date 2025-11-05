@@ -19,7 +19,11 @@
     {% else %}
       <p class="text-center text-muted">No camps available.</p>
     {% endif %}
-      <a href="{% url 'donor_dashboard' %}">Back to Dashboard</a>
+    {% if user.donorprofile %}
+      <a href="{% url 'donor_dashboard' %}" class="back-btn">Back to Dashboard</a>
+    {% else %}
+      <a href="{% url 'patient_dashboard' %}" class="back-btn">Back to Dashboard</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

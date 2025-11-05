@@ -10,13 +10,15 @@
       <p>Fill in the details to request blood for transfusion.</p>
     </div>
 
-    <form method="post" class="profile-form">
+    <form method="post" class="request-blood-form">
       {% csrf_token %}
       {{ form.as_p }}
-      <div class="text-center">
-        <button type="submit" class="btn-save" style="width:200px;">Submit Request</button>
-      </div>
+      <p><strong>Blood Group:</strong> {{ request.user.patientprofile.blood_group }}</p>
+      <button type="submit" class="btn-add">Request</button>
+      <a href="{% url 'patient_dashboard' %}" class="btn-cancel">Cancel</a>
     </form>
+
+
   </div>
 </div>
 

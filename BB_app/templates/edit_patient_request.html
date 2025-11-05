@@ -1,0 +1,17 @@
+{% extends "master.html" %}
+{% block title %}Edit Blood Request{% endblock %}
+{% block content %}
+
+<div class="appointment-form">
+  <div class="form-card">
+    <h2>Edit Blood Request</h2>
+    <form method="post" class="request-blood-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn-save">Update</button>
+      <a href="{% url 'track_request' %}" class="btn_delete">Cancel</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

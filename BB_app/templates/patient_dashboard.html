@@ -5,94 +5,101 @@
 
 <div class="hospital-dashboard">
 
-    <!-- Header with Welcome and Profile Dropdown -->
-    <div class="dashboard-header">
-        <div class="welcome-text">
-            <h2>Welcome, {{ request.user.username|title }}</h2>
-            <p>Manage your blood requests and track your health updates easily.</p>
-            <i class="fa fa-bell"></i>
-        </div>
-
-        <div class="dropdown">
-            {% if patient.profile_pic %}
-            <img src="{{ patient.profile_pic.url }}" alt="Profile Picture" class="hospital-logo" id="logoDropdown"
-                onclick="toggleDropdown()" />
-            {% else %}
-            <i class="fas fa-user-circle profile-icon" id="logoDropdown" onclick="toggleDropdown()"></i>
-            {% endif %}
-
-
-            <ul class="custom-dropdown shadow" id="dropdownMenu">
-                <li><a href="{% url 'patient_profile' %}"><i class="fas fa-user me-2"></i> Profile</a></li>
-                <li>
-                    <hr>
-                </li>
-                <li>
-                    <a href="#" class="text-danger" onclick="confirmLogout(event)">
-                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                    </a>
-                </li>
-            </ul>
-        </div>
+  <!-- Header with Welcome + Notification + Profile -->
+  <div class="dashboard-header">
+    <div class="welcome-text">
+      <h2>Welcome, {{ request.user.username|title }}</h2>
+      <p>Manage your blood requests and track your health updates easily.</p>
     </div>
 
-    <!-- Dashboard Action Cards -->
-    <div class="hospital-cards">
-
-        <!-- Search Blood Availability -->
-        <a href="{% url 'search_blood' %}" class="hosp-card">
-            <i class="fas fa-search"></i>
-            <h4>Search Blood Availability</h4>
-            <p>Find available blood by group, location, or hospital.</p>
+    <div class="header-right">
+      <!-- Notification Bell with Count -->
+      <div class="position-relative">
+        <a href="{% url 'notifications' %}" class="text-decoration-none text-danger">
+          <i class="fa fa-bell fa-lg"></i>
+          {% if unread_count > 0 %}
+          <span class="notif-badge">{{ unread_count }}</span>
+          {% endif %}
         </a>
+      </div>
 
-        <!-- Submit Blood Request -->
-        <a href="{% url 'patient_blood_request' %}" class="hosp-card">
-            <i class="fas fa-file-medical"></i>
-            <h4>Submit Blood Request</h4>
-            <p>Request blood units for transfusion based on your need.</p>
-        </a>
+      <!-- Profile Dropdown -->
+      <div class="dropdown">
+        {% if patient.profile_pic %}
+        <img src="{{ patient.profile_pic.url }}" alt="Profile Picture" class="hospital-logo" id="logoDropdown"
+          onclick="toggleDropdown()" />
+        {% else %}
+        <i class="fas fa-user-circle profile-icon" id="logoDropdown" onclick="toggleDropdown()"></i>
+        {% endif %}
 
-        <!-- Track Request Status -->
-        <a href="{% url 'track_request' %}" class="hosp-card">
-            <i class="fas fa-clipboard-list"></i>
-            <h4>Track Request Status</h4>
-            <p>Monitor the progress of your blood request in real time.</p>
-        </a>
-
-        <!-- View Blood Received History -->
-        <a href="{% url 'received_history' %}" class="hosp-card">
-            <i class="fas fa-history"></i>
-            <h4>Blood Received History</h4>
-            <p>View your previous blood transfusion records and details.</p>
-        </a>
-
+        <ul class="custom-dropdown shadow" id="dropdownMenu">
+          <li><a href="{% url 'patient_profile' %}"><i class="fas fa-user me-2"></i> Profile</a></li>
+          <li><hr></li>
+          <li>
+            <a href="#" class="text-danger" onclick="confirmLogout(event)">
+              <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
+  </div>
+
+  <!-- Dashboard Cards -->
+  <div class="hospital-cards">
+    <a href="{% url 'search_blood' %}" class="hosp-card">
+      <i class="fas fa-search"></i>
+      <h4>Search Blood Availability</h4>
+      <p>Find available blood by group, location, or hospital.</p>
+    </a>
+
+    <a href="{% url 'patient_blood_request' %}" class="hosp-card">
+      <i class="fas fa-file-medical"></i>
+      <h4>Submit Blood Request</h4>
+      <p>Request blood units for transfusion based on your need.</p>
+    </a>
+
+    <a href="{% url 'track_request' %}" class="hosp-card">
+      <i class="fas fa-clipboard-list"></i>
+      <h4>Track Request Status</h4>
+      <p>Monitor the progress of your blood request in real time.</p>
+    </a>
+
+    <a href="{% url 'received_history' %}" class="hosp-card">
+      <i class="fas fa-history"></i>
+      <h4>Blood Received History</h4>
+      <p>View your previous blood transfusion records and details.</p>
+    </a>
+
+     <a href="{% url 'donor_camp' %}" class="hosp-card">
+      <i class="fas fa-hand-holding-heart"></i>
+      <h4>Camps</h4>
+      <p>See upcoming and nearby camps are arranged by Hospitals.</p>
+    </a>
+
+  </div>
 </div>
 
 <script>
-    // Profile dropdown toggle
-    function toggleDropdown() {
-        const dropdown = document.getElementById("dropdownMenu");
-        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-    }
+  function toggleDropdown() {
+    const dropdown = document.getElementById("dropdownMenu");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
 
-    // Hide dropdown when clicking outside
-    document.addEventListener("click", function (event) {
-        const dropdown = document.getElementById("dropdownMenu");
-        const logo = document.getElementById("logoDropdown");
-        if (!logo.contains(event.target) && !dropdown.contains(event.target)) {
-            dropdown.style.display = "none";
-        }
-    });
-
-    // Logout confirmation
-    function confirmLogout(event) {
-        event.preventDefault();
-        if (confirm("Are you sure you want to logout?")) {
-            window.location.href = "{% url 'logout' %}";
-        }
+  document.addEventListener("click", function (event) {
+    const dropdown = document.getElementById("dropdownMenu");
+    const logo = document.getElementById("logoDropdown");
+    if (!logo.contains(event.target) && !dropdown.contains(event.target)) {
+      dropdown.style.display = "none";
     }
+  });
+
+  function confirmLogout(event) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to logout?")) {
+      window.location.href = "{% url 'logout' %}";
+    }
+  }
 </script>
 
 {% endblock %}

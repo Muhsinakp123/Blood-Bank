@@ -10,31 +10,30 @@
       <p>Find available blood by group, location, or hospital.</p>
     </div>
 
+    <!-- 🔍 Search Form -->
     <form method="get" action="{% url 'search_blood' %}" class="profile-form">
       <div class="row">
         <div class="col-md-4">
           <label for="blood_group">Blood Group</label>
           <select name="blood_group" id="blood_group">
-            <option value="">-- Select --</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-          </select>
+  <option value="">-- Select --</option>
+  {% for group in blood_groups %}
+    <option value="{{ group }}" {% if blood_group == group %}selected{% endif %}>{{ group }}</option>
+  {% endfor %}
+</select>
+
         </div>
 
         <div class="col-md-4">
           <label for="location">Location</label>
-          <input type="text" name="location" id="location" placeholder="Enter location" />
+          <input type="text" name="location" id="location" placeholder="Enter location"
+                 value="{{ request.GET.location }}">
         </div>
 
         <div class="col-md-4">
           <label for="hospital">Hospital</label>
-          <input type="text" name="hospital" id="hospital" placeholder="Enter hospital name" />
+          <input type="text" name="hospital" id="hospital" placeholder="Enter hospital name"
+                 value="{{ request.GET.hospital }}">
         </div>
       </div>
 
@@ -43,36 +42,43 @@
       </div>
     </form>
 
+    <!-- 🩸 Results Table -->
     {% if blood_stocks %}
     <div class="table-responsive mt-5">
-      <table class="table table-bordered">
-        <thead>
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-danger">
           <tr>
             <th>Hospital</th>
             <th>Location</th>
             <th>Blood Group</th>
             <th>Units Available</th>
-            <th>Contact</th>
           </tr>
         </thead>
         <tbody>
           {% for stock in blood_stocks %}
           <tr>
-            <td>{{ stock.hospital.name }}</td>
-            <td>{{ stock.hospital.location }}</td>
+            <td>{{ stock.hospital__hospital_name }}</td>
+            <td>{{ stock.hospital__location }}</td>
             <td>{{ stock.blood_group }}</td>
-            <td>{{ stock.units_available }}</td>
-            <td>{{ stock.hospital.contact_number }}</td>
+            <td><strong>{{ stock.total_units }}</strong></td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="5" class="text-center text-muted">No matching blood units found.</td>
+            <td colspan="5" class="text-center text-muted py-3">No matching blood units found.</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
     {% endif %}
+
+    <!-- 🔙 Back Button -->
+    <div class="text-center mt-4">
+      <a href="{% url 'patient_dashboard' %}" class="back-btn">
+        <i class="fa fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
   </div>
 </div>
 
