@@ -1,0 +1,48 @@
+{% extends 'admin_master.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h4 class="text-center text-primary mb-3">
+            Eligibility Details of {{ donor.full_name }}
+        </h4>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>Blood Group:</strong> {{ donor.blood_group }}</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p><strong>Submitted on:</strong> {{ req.submitted_on|date:"F j, Y, g:i a" }}</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <h5 class="mb-3 text-secondary">Donor Questionnaire Responses</h5>
+        <table class="table table-bordered table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th width="60%">Question</th>
+                    <th width="40%">Answer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question, answer in qa_pairs %}
+                <tr>
+                    <td>{{ question }}</td>
+                    <td>{{ answer }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted">No responses found.</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'donor_requests' %}" class="btn btn-secondary px-4">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

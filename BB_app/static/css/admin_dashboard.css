@@ -582,3 +582,146 @@ body {
   font-size: 0.95rem;
   line-height: 1.5;
 }
+.hospital-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 50px;
+  justify-items: center;
+  align-items: center;
+}
+
+.hosp-card {
+  background: #fff;
+  border: 2px solid #b30000;
+  border-radius: 15px;
+  padding: 25px 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #b30000;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  width: 90%;
+  max-width: 350px;
+}
+
+.hosp-card:hover {
+  background: #b30000;
+  color: #fff;
+  transform: translateY(-5px);
+}
+
+.hosp-card i {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.hosp-card h4 {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.hosp-card p {
+  font-size: 14px;
+  margin: 0;
+}
+
+
+/* ==============================
+   Requests Table Styling
+============================== */
+
+.requests-card {
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(179, 0, 0, 0.15);
+  padding: 25px;
+  animation: fadeInUp 0.4s ease;
+}
+
+.requests-card .table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.requests-card thead {
+  background: linear-gradient(90deg, #b30000, #cc0000);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.requests-card th,
+.requests-card td {
+  padding: 14px 16px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.requests-card tbody tr:nth-child(even) {
+  background-color: #fdf5f5;
+}
+
+.requests-card tbody tr:hover {
+  background-color: #fff3f3;
+  transition: 0.3s ease;
+}
+
+/* Status Badges */
+.badge {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Buttons inside table */
+.table .btn {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 5px 12px;
+  transition: all 0.3s ease;
+}
+
+.table .btn-success {
+  background: linear-gradient(90deg, #28a745, #218838);
+  border: none;
+}
+
+.table .btn-success:hover {
+  background: #1e7e34;
+  transform: translateY(-2px);
+}
+
+.table .btn-danger {
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  border: none;
+}
+
+.table .btn-danger:hover {
+  background: #a71d2a;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .requests-card {
+    padding: 15px;
+  }
+
+  .requests-card th,
+  .requests-card td {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .table .btn {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+}

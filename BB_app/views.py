@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import BloodDonationCampForm, LoginForm, PatientBloodRequestForm, ResetPasswordForm, UserForm, ContactForm, DonorForm, PatientForm, HospitalForm,HospitalProfile,DonorProfile,PatientProfile
+from .forms import BloodDonationCampForm, DonationDateForm, LoginForm, PatientBloodRequestForm, ResetPasswordForm, UserForm, ContactForm, DonorForm, PatientForm, HospitalForm,HospitalProfile,DonorProfile,PatientProfile
 from .models import BloodDonationCamp, PatientBloodRequest, Profile
 from django.contrib.auth.models import User
 from .models import HospitalProfile, BloodStock, BloodRequest,BloodDonation,Notification
@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Sum
 from django.db import models
 from datetime import date
+from django.utils import timezone
 import io
 import base64
 from matplotlib import pyplot as plt
@@ -884,59 +885,100 @@ def manage_request(request):
 
 @login_required
 def approve_request(request, id):
-    blood_request = get_object_or_404(BloodRequest, id=id)
-    blood_request.status = 'Approved'
-    blood_request.save()
+    # Try to find request in either Hospital or Patient models
+    blood_request = BloodRequest.objects.filter(id=id).first()
+    patient_request = PatientBloodRequest.objects.filter(id=id).first()
 
-    # ✅ Notify Hospital
-    Notification.objects.create(
-        recipient=blood_request.hospital.user,
-        role='hospital',
-        title="Blood Request Approved",
-        message=f"Your blood request for {blood_request.patient_name} ({blood_request.blood_group}) has been approved by Admin."
-    )
+    if not blood_request and not patient_request:
+        messages.error(request, "Request not found.")
+        return redirect('manage_request')
 
-    # ✅ Notify Patient
-    patient = PatientProfile.objects.filter(full_name=blood_request.patient_name).first()
-    if patient:
+    today = timezone.now().date()
+
+    # --- If Hospital Request ---
+    if blood_request:
+        blood_request.status = 'Approved'
+        blood_request.save()
+
+        # Auto-complete if date expired
+        if blood_request.date_required < today:
+            blood_request.status = 'Completed'
+            blood_request.save()
+
+        # ✅ Notify Hospital
         Notification.objects.create(
-            recipient=patient.user,
-            role='patient',
-            title="🎉 Blood Request Approved",
-            message=f"Good news! Your blood request for {blood_request.blood_group} has been approved."
+            recipient=blood_request.hospital.user,
+            role='hospital',
+            title="Blood Request Approved ✅",
+            message=f"Your blood request for {blood_request.blood_group} has been approved by Admin."
         )
 
-    messages.success(request, "Blood request approved successfully.")
+        messages.success(request, "Hospital blood request approved successfully.")
+
+    # --- If Patient Request ---
+    elif patient_request:
+        patient_request.status = 'Approved'
+        patient_request.save()
+
+        # Auto-complete if date expired
+        if patient_request.date_required < today:
+            patient_request.status = 'Completed'
+            patient_request.save()
+
+        # ✅ Notify Patient
+        Notification.objects.create(
+            recipient=patient_request.patient.user,
+            role='patient',
+            title="🎉 Blood Request Approved",
+            message=f"Good news! Your blood request for {patient_request.blood_group} has been approved by Admin."
+        )
+
+        messages.success(request, "Patient blood request approved successfully.")
+
     return redirect('manage_request')
+
 
 
 @login_required
 def reject_request(request, id):
-    blood_request = get_object_or_404(BloodRequest, id=id)
-    patient_name = blood_request.patient_name
-    blood_group = blood_request.blood_group
-    hospital_user = blood_request.hospital.user
-    blood_request.delete()
+    # Try to find request in both tables
+    blood_request = BloodRequest.objects.filter(id=id).first()
+    patient_request = PatientBloodRequest.objects.filter(id=id).first()
 
-    # ✅ Notify Hospital
-    Notification.objects.create(
-        recipien=blood_request.hospital.user,
-        role='hospital',
-        title="Blood Request Rejected",
-        message=f"Your blood request for {patient_name} ({blood_group}) has been rejected by Admin."
-    )
+    if not blood_request and not patient_request:
+        messages.error(request, "Request not found.")
+        return redirect('manage_request')
 
-    # ✅ Notify Patient
-    patient = PatientProfile.objects.filter(full_name=patient_name).first()
-    if patient:
+    # --- Hospital Request ---
+    if blood_request:
+        hospital_user = blood_request.hospital.user
+        blood_group = blood_request.blood_group
+        blood_request.delete()
+
         Notification.objects.create(
-            recipient=patient.user,
+            recipient=hospital_user,
+            role='hospital',
+            title="❌ Blood Request Rejected",
+            message=f"Your blood request for {blood_group} has been rejected by Admin."
+        )
+
+        messages.warning(request, "Hospital blood request rejected and deleted successfully.")
+
+    # --- Patient Request ---
+    elif patient_request:
+        patient_user = patient_request.patient.user
+        blood_group = patient_request.blood_group
+        patient_request.delete()
+
+        Notification.objects.create(
+            recipient=patient_user,
             role='patient',
             title="❌ Blood Request Rejected",
             message=f"Sorry! Your blood request for {blood_group} was rejected by Admin."
         )
 
-    messages.warning(request, "Blood request rejected and deleted successfully.")
+        messages.warning(request, "Patient blood request rejected and deleted successfully.")
+
     return redirect('manage_request')
 
 @login_required
@@ -976,3 +1018,99 @@ def delete_camp(request, camp_id):
 
     messages.success(request, f"Camp '{camp_name}' was deleted and patients have been notified.")
     return redirect('hospital_dashboard')
+
+@login_required
+def hospital_requests(request):
+    requests = BloodRequest.objects.all().order_by('-date_required')
+    today = timezone.now().date()
+
+    for r in requests:
+        if r.status == 'Approved' and r.date_required < today:
+            r.status = 'Completed'
+            r.save()
+
+    return render(request, 'admin_hospital_requests.html', {'requests': requests})
+@login_required
+def patient_requests(request):
+    requests = PatientBloodRequest.objects.all()
+
+    # Automatically mark expired requests as "Completed"
+    for req in requests:
+        if req.status == "Approved" and req.date_Required < date.today():
+            req.status = "Completed"
+            req.save()
+
+    return render(request, "admin_patient_requests.html", {"requests": requests})
+
+
+@login_required
+def donor_requests(request):
+    requests = DonorAppointmentRequest.objects.select_related('donor').order_by('-submitted_on')
+    return render(request, 'admin_donor_requests.html', {'requests': requests})
+
+@login_required
+def donor_eligibility(request, id):
+    req = DonorAppointmentRequest.objects.get(id=id)
+    donor = req.donor.donorprofile
+
+    # Question mapping
+    questions = {
+        "q1": "When was your last blood donation?",
+        "q2": "Have you had any recent illness or fever?",
+        "q3": "Are you currently taking any medication?",
+        "q4": "Have you undergone any surgery in the past 6 months?",
+        "q5": "Do you have any chronic diseases (e.g. diabetes, hypertension)?",
+        "q6": "Do you consume alcohol or tobacco regularly?",
+        "q7": "Are you currently pregnant or breastfeeding?",
+        "q8": "Have you been vaccinated in the past 1 month?",
+        "q9": "Have you had a tattoo or piercing in the past 6 months?",
+        "q10": "Do you have any bleeding or clotting disorders?",
+        "q11": "Have you tested positive for any infectious disease (HIV, Hepatitis, etc.)?",
+        "q12": "Have you experienced unexplained weight loss recently?",
+        "q13": "Any additional remarks or health conditions to note?",
+    }
+
+    # Combine question and answer pairs
+    qa_pairs = []
+    for key, answer in req.responses.items():
+        question = questions.get(key, key)
+        qa_pairs.append((question, answer))
+
+    return render(request, "admin_donor_eligibility.html", {
+        "req": req,
+        "donor": donor,
+        "qa_pairs": qa_pairs,
+    })
+
+
+
+@login_required
+def send_donation_date(request, id):
+    req = get_object_or_404(DonorAppointmentRequest, id=id)
+    donor_profile = DonorProfile.objects.filter(user=req.donor).first()
+
+    if request.method == 'POST':
+        form = DonationDateForm(request.POST)
+        if form.is_valid():
+            req.status = "Approved"
+            req.remarks = f"Donation scheduled on {form.cleaned_data['donation_date']} at {form.cleaned_data['donation_time']}"
+            req.save()
+            messages.success(request, f"Donation date set for {donor_profile.full_name}.")
+            return redirect('donor_requests')
+    else:
+        form = DonationDateForm()
+
+    return render(request, 'send_donation_date.html', {
+        'form': form,
+        'donor': donor_profile
+    })
+    
+@login_required
+def reject_donor_request(request, id):
+    req = get_object_or_404(DonorAppointmentRequest, id=id)
+    donor_profile = DonorProfile.objects.filter(user=req.donor).first()
+    req.status = "Rejected"
+    req.save()
+    messages.error(request, f"Donation request by {donor_profile.full_name} has been rejected.")
+    return redirect('donor_requests')
+

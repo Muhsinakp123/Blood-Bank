@@ -204,3 +204,7 @@ class DonorAppointmentRequestForm(forms.Form):
     q11 = forms.ChoiceField(label="Have you had any tattoos, piercings, or acupuncture in the past 6–12 months?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
     q12 = forms.ChoiceField(label="Have you had any recent illnesses, fever, or infections?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
     q13 = forms.ChoiceField(label="Are you currently pregnant, breastfeeding, or menstruating? (for female donors)", choices=[('Yes', 'Yes'), ('No', 'No'), ('Not Applicable', 'Not Applicable')], widget=forms.RadioSelect)
+
+class DonationDateForm(forms.Form):
+    donation_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    donation_time = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))

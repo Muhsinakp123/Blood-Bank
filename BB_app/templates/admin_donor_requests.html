@@ -1,0 +1,52 @@
+{% extends 'admin_master.html' %}
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="dashboard-header mb-4 text-center">
+    <h2><i class="fa fa-hospital text-danger"></i> Donor Requests</h2>
+  </div>
+
+    <div class="card shadow-sm p-4 requests-card">
+        <table class="table table-bordered table-hover shadow-sm">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Donor Name</th>
+                    <th>Blood Group</th>
+                    <th>Eligibility</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr class="text-center">
+                    <td>{{ req.donor.username }}</td>
+                    <td>{{ req.donor.donorprofile.blood_group }}</td>
+                    <td>
+                        <a href="{% url 'donor_eligibility' req.id %}" class="btn btn-outline-primary btn-sm">View</a>
+                    </td>
+                    <td>
+                        {% if req.status == 'Approved' %}
+                        <span class="badge bg-success">{{ req.status }}</span>
+                        {% elif req.status == 'Rejected' %}
+                        <span class="badge bg-danger">{{ req.status }}</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">{{ req.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if req.status == 'Pending' %}
+                        <a href="{% url 'send_donation_date' req.id %}" class="btn btn-success btn-sm">Send Date</a>
+                        <a href="{% url 'reject_donor_request' req.id %}" class="btn btn-danger btn-sm">Reject</a>
+                        {% elif req.status == 'Approved' %}
+                        <span class="badge bg-info">Date Sent</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Completed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

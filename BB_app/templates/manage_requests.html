@@ -7,138 +7,31 @@
     <h2><i class="fa fa-envelope-open-text text-danger"></i> Manage Requests</h2>
   </div>
 
-  <!-- ====== Cards Section ====== -->
-  <div class="row justify-content-center mb-4">
-    <div class="col-md-3">
-      <a href="?type=hospital" class="card text-center p-4 shadow-sm manage-card">
-        <i class="fa fa-hospital fa-2x text-primary mb-2"></i>
-        <h5>Hospital Requests</h5>
-        <p>{{ hospital_count }} Pending</p>
-      </a>
-    </div>
-    <div class="col-md-3">
-      <a href="?type=patient" class="card text-center p-4 shadow-sm manage-card">
-        <i class="fa fa-user-injured fa-2x text-danger mb-2"></i>
-        <h5>Patient Requests</h5>
-        <p>{{ patient_count }} Pending</p>
-      </a>
-    </div>
-    <div class="col-md-3">
-      <a href="?type=donor" class="card text-center p-4 shadow-sm manage-card">
-        <i class="fa fa-hand-holding-heart fa-2x text-success mb-2"></i>
-        <h5>Donor Requests</h5>
-        <p>{{ donor_count }} Pending</p>
-      </a>
-    </div>
+ <!-- Dashboard Action Cards -->
+  <div class="hospital-cards">
+
+    <a href="{% url 'hospital_requests' %}" class="hosp-card">
+      <i class="fas fa-hospital"></i>
+      <h4>Hospital Requests</h4>
+      <p style="font-size: 18px;"><strong>{{ hospital_count }} Pending</strong></p>
+      <p>Review and manage all blood requests.</p>
+    </a>
+
+    <a href="{% url 'patient_requests' %}" class="hosp-card">
+      <i class="fas fa-user-injured"></i>
+      <h4>Patient Requests</h4>
+      <p style="font-size: 18px;"><strong>{{ patient_count }} Pending</strong></p>
+      <p>Track and manage blood requests.</p>
+    </a>
+
+    <a href="{% url 'donor_requests' %}" class="hosp-card">
+      <i class="fas fa-hand-holding-heart"></i>
+      <h4>Donor Requests</h4>
+      <p style="font-size: 18px;"><strong>{{ donor_count }} Pending</strong></p>
+      <p>View and approve donor appointment requests.</p>
+    </a>
+
   </div>
-
-  {% if show_table %}
-  <div class="card shadow-sm p-4 mt-4">
-    <h4 class="mb-3 text-center">{{ table_title }}</h4>
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle">
-        <thead class="table-dark text-center">
-          <tr>
-            {% if request_type == "hospital" %}
-              <th>Hospital Name</th>
-              <th>Patient Name</th>
-              <th>Blood Group</th>
-              <th>Units</th>
-              <th>Date Required</th>
-              <th>Emergency</th>
-              <th>Status</th>
-              <th>Action</th>
-            {% elif request_type == "patient" %}
-              <th>Patient Name</th>
-              <th>Blood Group</th>
-              <th>Units</th>
-              <th>Date Required</th>
-              <th>Notes</th>
-              <th>Status</th>
-              <th>Action</th>
-            {% elif request_type == "donor" %}
-              <th>Donor Name</th>
-              <th>Blood Group</th>
-              <th>Date Submitted</th>
-              <th>Appointment Form</th>
-              <th>Status</th>
-              <th>Action</th>
-            {% endif %}
-          </tr>
-        </thead>
-
-        <tbody class="text-center">
-          {% for r in requests %}
-          <tr>
-            {% if request_type == "hospital" %}
-              <td>{{ r.hospital.hospital_name }}</td>
-              <td>{{ r.patient_name }}</td>
-              <td>{{ r.blood_group }}</td>
-              <td>{{ r.units_requested }}</td>
-              <td>{{ r.date_required }}</td>
-              <td>
-                {% if r.is_emergency %}
-                <span class="badge bg-danger">Emergency</span>
-                {% else %}
-                <span class="badge bg-info text-dark">Normal</span>
-                {% endif %}
-              </td>
-            {% elif request_type == "patient" %}
-              <td>{{ r.patient_name }}</td>
-              <td>{{ r.blood_group }}</td>
-              <td>{{ r.units }}</td>
-              <td>{{ r.date_required }}</td>
-              <td>{{ r.notes }}</td>
-            {% elif request_type == "donor" %}
-              <td>{{ r.donor.donor_name }}</td>
-              <td>{{ r.donor.blood_group }}</td>
-              <td>{{ r.date_submitted }}</td>
-              <td>
-                <a href="{{ r.appointment_form.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
-                  View Form
-                </a>
-              </td>
-            {% endif %}
-
-            <!-- Common: Status + Action -->
-            <td>
-              {% if r.status == 'Pending' %}
-              <span class="badge bg-warning text-dark">Pending</span>
-              {% elif r.status == 'Approved' %}
-              <span class="badge bg-success">Approved</span>
-              {% else %}
-              <span class="badge bg-secondary">Rejected</span>
-              {% endif %}
-            </td>
-
-            <td>
-              <a href="{% url 'approve_request' r.id %}" class="btn btn-success btn-sm me-1">Approve</a>
-              <a href="{% url 'reject_request' r.id %}" class="btn btn-danger btn-sm">Reject</a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="8" class="text-center text-muted">No pending requests found.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  {% endif %}
 </div>
-
-<style>
-.manage-card {
-  transition: 0.3s;
-  border-radius: 12px;
-  text-decoration: none;
-  color: #000;
-  background: #fff;
-}
-.manage-card:hover {
-  transform: translateY(-6px);
-  background-color: #f8f9fa;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-</style>
 
 {% endblock %}

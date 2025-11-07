@@ -1,0 +1,79 @@
+{% extends 'admin_master.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg p-4">
+    <div class="dashboard-header mb-4 text-center">
+    <h2><i class="fa fa-hospital text-danger"></i> Patient Blood Requests</h2>
+  </div>
+
+    {% if requests %}
+    <div class="table-responsive">
+        <div class="card shadow-sm p-4 requests-card">
+      <table
+        class="table table-bordered table-hover align-middle text-center"
+        style="border-radius: 12px; overflow: hidden;"
+      >
+        <thead class="table-danger text-dark">
+          <tr>
+            <th>Patient Name</th>
+            <th>Blood Group</th>
+            <th>Hospital Name</th>
+            <th>Units Requested</th>
+            <th>Emergency</th>
+            <th>Date Required</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for req in requests %}
+          <tr>
+            <td>{{ req.patient.full_name }}</td>
+            <td>{{ req.patient.blood_group }}</td>
+            <td>{{ req.hospital_Name }}</td>
+            <td>{{ req.units_Requested }}</td>
+            <td>
+              {% if req.is_Emergency %}
+              <span class="badge bg-danger">Emergency</span>
+              {% else %}
+              <span class="badge bg-secondary">Normal</span>
+              {% endif %}
+            </td>
+            <td>{{ req.date_Required }}</td>
+            <td>
+              {% if req.status == "Pending" %}
+              <span class="badge bg-warning text-dark">{{ req.status }}</span>
+              {% elif req.status == "Approved" %}
+              <span class="badge bg-success">{{ req.status }}</span>
+              {% elif req.status == "Rejected" %}
+              <span class="badge bg-danger">{{ req.status }}</span>
+              {% elif req.status == "Completed" %}
+              <span class="badge bg-info text-dark">{{ req.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <a
+                href="{% url 'approve_request' req.id %}"
+                class="btn btn-success btn-sm me-2"
+                >Approve</a
+              >
+              <a
+                href="{% url 'reject_request' req.id %}"
+                class="btn btn-danger btn-sm"
+                >Reject</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+    {% else %}
+    <p class="text-center text-muted mt-3">No patient blood requests found.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

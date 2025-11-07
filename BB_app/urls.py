@@ -64,6 +64,15 @@ urlpatterns = [
     path('approve_request/<int:id>/', views.approve_request, name='approve_request'),
     path('reject_request/<int:id>/', views.reject_request, name='reject_request'),
     path('manage_stock/admin/', views.manage_stock_admin, name='manage_stock_admin'),
+    path('adminpanel/hospital_requests/', views.hospital_requests, name='hospital_requests'),
+    path('adminpanel/patient_requests/', views.patient_requests, name='patient_requests'),
+    path('adminpanel/donor_requests/', views.donor_requests, name='donor_requests'),
+    path('adminpanel/donor_requests/', views.donor_requests, name='donor_requests'),
+    path('adminpanel/donor_eligibility/<int:id>/', views.donor_eligibility, name='donor_eligibility'),
+    path('adminpanel/send_donation_date/<int:id>/', views.send_donation_date, name='send_donation_date'),
+    path('adminpanel/reject_donor_request/<int:id>/', views.reject_donor_request, name='reject_donor_request'),
+
+
 
 
     

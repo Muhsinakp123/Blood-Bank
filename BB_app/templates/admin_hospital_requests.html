@@ -1,0 +1,63 @@
+{% extends 'admin_master.html' %}
+{% block title %}Hospital Requests{% endblock %}
+{% block content %}
+
+<div class="container-fluid py-4">
+  <div class="dashboard-header mb-4 text-center">
+    <h2><i class="fa fa-hospital text-danger"></i> Hospital Blood Requests</h2>
+  </div>
+
+  <div class="card shadow-sm p-4 requests-card">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Hospital Name</th>
+            <th>Blood Group</th>
+            <th>Units Required</th>
+            <th>Emergency</th>
+            <th>Date Required</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in requests %}
+          <tr>
+            <td>{{ r.hospital.hospital_name }}</td>
+            <td>{{ r.blood_group }}</td>
+            <td>{{ r.units_requested }}</td>
+            <td>
+              {% if r.is_emergency %}
+                <span class="badge bg-danger">Emergency</span>
+              {% else %}
+                <span class="badge bg-info text-dark">Normal</span>
+              {% endif %}
+            </td>
+            <td>{{ r.date_required }}</td>
+            <td>
+              {% if r.status == 'Pending' %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% elif r.status == 'Approved' %}
+                <span class="badge bg-success">Approved</span>
+              {% elif r.status == 'Completed' %}
+                <span class="badge bg-secondary">Completed</span>
+              {% else %}
+                <span class="badge bg-danger">Rejected</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'approve_request' r.id %}" class="btn btn-success btn-sm me-2">Approve</a>
+              <a href="{% url 'reject_request' r.id %}" class="btn btn-danger btn-sm">Reject</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-muted">No requests found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

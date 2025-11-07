@@ -183,9 +183,6 @@ class BloodDonationCamp(models.Model):
 
     def __str__(self):
         return f"{self.camp_name} ({self.hospital.hospital_name})"
-    
-# models.py
-from django.contrib.auth.models import User
 
 class Notification(models.Model):
     ROLE_CHOICES = [
