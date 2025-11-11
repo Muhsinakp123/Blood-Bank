@@ -17,7 +17,7 @@
       {% if n.type == 'emergency' %}alert-danger{% elif n.type == 'warning' %}alert-warning{% else %}alert-info{% endif %}">
         <div>
           <strong>{{ n.title }}</strong>
-          <small class="text-muted d-block">{{ n.message }}</small>
+          <small class="text-muted d-block">{{ n.message|safe }}</small>
         </div>
         <small class="text-secondary">{{ n.created_at|date:"d M Y, H:i" }}</small>
       </li>

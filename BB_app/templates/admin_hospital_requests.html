@@ -1,16 +1,15 @@
 {% extends 'admin_master.html' %}
 {% block title %}Hospital Requests{% endblock %}
+
 {% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg p-4">
+    <div class="dashboard-header mb-4 text-center">
+      <h2><i class="fa fa-hospital text-danger"></i> Hospital Blood Requests</h2>
+    </div>
 
-<div class="container-fluid py-4">
-  <div class="dashboard-header mb-4 text-center">
-    <h2><i class="fa fa-hospital text-danger"></i> Hospital Blood Requests</h2>
-  </div>
-
-  <div class="card shadow-sm p-4 requests-card">
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle text-center">
-        <thead class="table-dark">
+    {% if requests %}
+ <div class="card shadow-sm p-4 requests-card"> <div class="table-responsive"> <table class="table table-bordered table-striped align-middle text-center"> <thead class="table-dark">
           <tr>
             <th>Hospital Name</th>
             <th>Blood Group</th>
@@ -23,41 +22,61 @@
         </thead>
         <tbody>
           {% for r in requests %}
-          <tr>
+          <tr class="{% if r.is_emergency %}table-danger{% elif r.status == 'Expired' %}table-secondary{% endif %}">
             <td>{{ r.hospital.hospital_name }}</td>
             <td>{{ r.blood_group }}</td>
             <td>{{ r.units_requested }}</td>
             <td>
               {% if r.is_emergency %}
-                <span class="badge bg-danger">Emergency</span>
+              <span class="badge bg-danger">Emergency</span>
               {% else %}
-                <span class="badge bg-info text-dark">Normal</span>
+              <span class="badge bg-secondary">Normal</span>
               {% endif %}
             </td>
             <td>{{ r.date_required }}</td>
             <td>
-              {% if r.status == 'Pending' %}
-                <span class="badge bg-warning text-dark">Pending</span>
-              {% elif r.status == 'Approved' %}
-                <span class="badge bg-success">Approved</span>
-              {% elif r.status == 'Completed' %}
-                <span class="badge bg-secondary">Completed</span>
+              {% if r.status == "Pending" %}
+              <span class="badge bg-warning text-dark">Pending</span>
+              {% elif r.status == "Approved" %}
+              <span class="badge bg-success">Approved</span>
+              {% elif r.status == "Completed" %}
+              <span class="badge bg-secondary">Completed</span>
+              {% elif r.status == "Expired" %}
+              <span class="badge bg-danger">Expired</span>
               {% else %}
-                <span class="badge bg-danger">Rejected</span>
+              <span class="badge bg-danger">Rejected</span>
               {% endif %}
             </td>
             <td>
+              {% if r.status == 'Pending' %}
               <a href="{% url 'approve_request' r.id %}" class="btn btn-success btn-sm me-2">Approve</a>
-              <a href="{% url 'reject_request' r.id %}" class="btn btn-danger btn-sm">Reject</a>
+              <a href="{% url 'reject_request' r.id %}"
+                onclick="return confirm('Are you sure you want to reject this blood request? This action cannot be undone.')"
+                class="btn btn-danger btn-sm">Reject</a>
+              {% else %}
+              ---
+              {% endif %}
             </td>
           </tr>
           {% empty %}
-          <tr><td colspan="7" class="text-muted">No requests found.</td></tr>
+          <tr>
+            <td colspan="7" class="text-muted">No requests found.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+    </div>
+    {% else %}
+    <p class="text-center text-muted mt-3">No hospital blood requests found.</p>
+    {% endif %}
+
+    <div class="text-center mt-3">
+      <a href="{% url 'manage_request' %}" class="btn btn-outline-secondary">
+        <i class="fa fa-arrow-left"></i> Back
+      </a>
+    </div>
+
   </div>
 </div>
-
 {% endblock %}

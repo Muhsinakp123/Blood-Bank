@@ -28,7 +28,7 @@ urlpatterns = [
     path('camp/update/<int:id>/', views.update_camp, name='update_camp'),
     path('camp/delete/<int:camp_id>/', views.delete_camp, name='delete_camp'),
     path('mark_notification/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
-     path('manage_stock/', views.manage_stock, name='manage_stock'),
+
     
     
     path('patient_dashboard/', views.patient_dashboard, name='patient_dashboard'),
@@ -51,7 +51,6 @@ urlpatterns = [
     path('donor/profile/', views.donor_profile, name='donor_profile'),
     path('donor/<int:donor_id>/profile/delete/', views.donor_profile_delete, name='donor_profile_delete'),
     path('donor/appoinment/', views.donor_appoinment, name='donor_appoinment'),
-    path('donor/donation_status/', views.donation_status, name='donation_status'),
     path('donor/donation_history/', views.donation_history, name='donation_history'),
     path('donor/camp/', views.donor_camp, name='donor_camp'),
     
@@ -63,7 +62,7 @@ urlpatterns = [
     path('manage_request/', views.manage_request, name='manage_request'),
     path('approve_request/<int:id>/', views.approve_request, name='approve_request'),
     path('reject_request/<int:id>/', views.reject_request, name='reject_request'),
-    path('manage_stock/admin/', views.manage_stock_admin, name='manage_stock_admin'),
+    path('manage_stock_admin/', views.manage_stock_admin, name='manage_stock_admin'),
     path('adminpanel/hospital_requests/', views.hospital_requests, name='hospital_requests'),
     path('adminpanel/patient_requests/', views.patient_requests, name='patient_requests'),
     path('adminpanel/donor_requests/', views.donor_requests, name='donor_requests'),
@@ -71,6 +70,12 @@ urlpatterns = [
     path('adminpanel/donor_eligibility/<int:id>/', views.donor_eligibility, name='donor_eligibility'),
     path('adminpanel/send_donation_date/<int:id>/', views.send_donation_date, name='send_donation_date'),
     path('adminpanel/reject_donor_request/<int:id>/', views.reject_donor_request, name='reject_donor_request'),
+    path('donor/show_donation_details/<int:id>/', views.show_donation_details, name='show_donation_details'),
+    path('donor/accept_date/<int:id>/', views.donor_accept_date, name='donor_accept_date'),
+    path('donor/reschedule/<int:id>/', views.donor_reschedule_request, name='donor_reschedule_request'),
+    
+
+
 
 
 

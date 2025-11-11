@@ -1,0 +1,20 @@
+{% extends 'master.html' %}
+{% block title %}Donation Details{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow p-4 text-center">
+        <h3 class="text-danger mb-3">Donation Appointment</h3>
+        <p><strong>Date:</strong> {{ req.donation_date }}</p>
+        <p><strong>Time:</strong> {{ req.donation_time }}</p>
+
+        {% if req.status == "Date Sent" %}
+        <div class="mt-4">
+            <a href="{% url 'donor_accept_date' req.id %}" class="btn btn-success me-3">Accept</a>
+            <a href="{% url 'donor_reschedule_request' req.id %}" class="btn btn-warning">Reschedule</a>
+        </div>
+        {% elif req.status == "Accepted" %}
+        <div class="alert alert-success mt-3">You have accepted this schedule.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

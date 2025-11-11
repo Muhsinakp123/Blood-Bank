@@ -243,93 +243,6 @@ body {
   }
 }
 
-
-/* ==========================
-   Manage Blood Stock Styling
-========================== */
-/* --------------------------------
-   Improved Manage Stock Page Styling
----------------------------------- */
-
-.stock-page {
-  padding-bottom: 60px;
-}
-
-.dashboard-header {
-  background: linear-gradient(90deg, #b30000, #cc0000);
-  padding: 18px 25px;
-  color: #fff;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.2rem;
-}
-
-.add-stock-btn {
-  background: linear-gradient(90deg, #b30000, #cc0000);
-  color: white;
-  border-radius: 8px;
-  padding: 17px 23px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.add-stock-btn:hover {
-  background: #990000;
-  transform: translateY(-3px);
-  box-shadow: 0 5px 12px rgba(179, 0, 0, 0.3);
-}
-
-.stock-card {
-  border: none;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 6px 18px rgba(179, 0, 0, 0.15);
-}
-
-.stock-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  border-radius: 10px;
-  overflow: hidden;
-  font-size: 0.95rem;
-}
-
-.stock-table thead {
-  background: linear-gradient(90deg, #b30000, #cc0000);
-  color: #fff;
-}
-
-.stock-table th {
-  padding: 14px;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.stock-table td {
-  padding: 12px;
-  background: #fff;
-  transition: background-color 0.3s;
-}
-
-.stock-table tbody tr:hover td {
-  background-color: #fff6f6;
-}
-
-.blood-type {
-  font-weight: 700;
-  color: #b30000;
-  font-size: 1.1rem;
-}
-
-.units {
-  color: #333;
-  font-weight: 600;
-}
-
 /* ================================
    Admin Hospital Stock Styling
 ================================ */
@@ -384,13 +297,13 @@ body {
 .custom-table th:nth-child(1),
 .custom-table td:nth-child(1) {
   width: 30%;
-  text-align: left;
+  text-align: center;
 }
 
 .custom-table th:nth-child(2),
 .custom-table td:nth-child(2) {
   width: 35%;
-  text-align: left;
+  text-align: center;
 }
 
 .custom-table th:nth-child(3),
@@ -424,6 +337,7 @@ body {
   font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;
+  margin-bottom: 10px;
 }
 
 .show-btn:hover {
@@ -637,6 +551,7 @@ body {
   box-shadow: 0 6px 18px rgba(179, 0, 0, 0.15);
   padding: 25px;
   animation: fadeInUp 0.4s ease;
+  margin-top: 15px;
 }
 
 .requests-card .table {
@@ -724,4 +639,11 @@ body {
     padding: 4px 8px;
     font-size: 0.8rem;
   }
+}
+
+.ddt {
+  text-align: right;
+}
+.ddt_ul {
+  list-style: none;
 }

@@ -144,6 +144,8 @@ class BloodRequest(models.Model):
         ('Pending', 'Pending'),
         ('Approved', 'Approved'),
         ('Rejected', 'Rejected'),
+        ('Completed', 'Completed'),
+        ('Expired', 'Expired'),
     ]
     status = models.CharField(max_length=10, choices=status_choices, default='Pending')
 
@@ -157,7 +159,7 @@ class PatientBloodRequest(models.Model):
     date_Required = models.DateField()
     is_Emergency = models.BooleanField(default=False)
     request_date = models.DateTimeField(auto_now_add=True)
-    status_choices = [('Pending','Pending'),('Approved','Approved'),('Rejected','Rejected')]
+    status_choices = [('Pending','Pending'),('Approved','Approved'),('Rejected','Rejected'),('Completed', 'Completed'),('Expired', 'Expired'),]
     status = models.CharField(max_length=10, choices=status_choices, default='Pending')
 
     
@@ -213,8 +215,17 @@ class DonorAppointmentRequest(models.Model):
     donor = models.ForeignKey(User, on_delete=models.CASCADE)
     responses = models.JSONField()  # to store answers as JSON
     submitted_on = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, default='Pending')
+    status = models.CharField(max_length=20, choices=[
+        ('Pending', 'Pending'),
+        ('Date Sent', 'Date Sent'),
+        ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
+        ('Donated', 'Donated'),
+        ], default='Pending')
+
     remarks = models.TextField(blank=True, null=True)
+    donation_date = models.DateField(blank=True, null=True)
+    donation_time = models.TimeField(blank=True, null=True)
 
     def __str__(self):
         return f"Request by {self.donor.username} on {self.submitted_on.date()}"

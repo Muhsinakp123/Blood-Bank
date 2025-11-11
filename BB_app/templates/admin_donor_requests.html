@@ -1,52 +1,121 @@
 {% extends 'admin_master.html' %}
-{% block content %}
-<div class="container-fluid py-4">
-  <div class="dashboard-header mb-4 text-center">
-    <h2><i class="fa fa-hospital text-danger"></i> Donor Requests</h2>
-  </div>
+{% block title %}Donor Requests{% endblock %}
 
-    <div class="card shadow-sm p-4 requests-card">
-        <table class="table table-bordered table-hover shadow-sm">
-            <thead class="table-dark text-center">
-                <tr>
-                    <th>Donor Name</th>
-                    <th>Blood Group</th>
-                    <th>Eligibility</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for req in requests %}
-                <tr class="text-center">
-                    <td>{{ req.donor.username }}</td>
-                    <td>{{ req.donor.donorprofile.blood_group }}</td>
-                    <td>
-                        <a href="{% url 'donor_eligibility' req.id %}" class="btn btn-outline-primary btn-sm">View</a>
-                    </td>
-                    <td>
-                        {% if req.status == 'Approved' %}
-                        <span class="badge bg-success">{{ req.status }}</span>
-                        {% elif req.status == 'Rejected' %}
-                        <span class="badge bg-danger">{{ req.status }}</span>
-                        {% else %}
-                        <span class="badge bg-warning text-dark">{{ req.status }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if req.status == 'Pending' %}
-                        <a href="{% url 'send_donation_date' req.id %}" class="btn btn-success btn-sm">Send Date</a>
-                        <a href="{% url 'reject_donor_request' req.id %}" class="btn btn-danger btn-sm">Reject</a>
-                        {% elif req.status == 'Approved' %}
-                        <span class="badge bg-info">Date Sent</span>
-                        {% else %}
-                        <span class="badge bg-secondary">Completed</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <div class="dashboard-header mb-4 text-center">
+            <h2><i class="fa fa-hospital text-danger"></i> Donor Requests</h2>
+        </div>
+
+        {% if requests %}
+        <div class="card shadow-sm p-4 requests-card">
+            <table class="table table-bordered table-hover shadow-sm align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Donor Name</th>
+                        <th>Blood Group</th>
+                        <th>Eligibility</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr class="{% if req.status == 'Rejected' %}table-secondary{% endif %}">
+                        <td>{{ req.donor.username }}</td>
+                        <td>{{ req.donor.donorprofile.blood_group }}</td>
+                        <td>
+                            <a href="{% url 'donor_eligibility' req.id %}" class="btn btn-outline-primary btn-sm">
+                                View
+                            </a>
+                        </td>
+
+                        <!-- ✅ STATUS COLUMN -->
+                        <td>
+                            {% if req.status == 'Approved' or req.status == 'Accepted' %}
+                            <span class="badge bg-success">Approved</span>
+                            {% elif req.status == 'Donated' %}
+                            <span class="badge bg-secondary">Donated</span>
+                            {% elif req.status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- ✅ ACTION COLUMN -->
+                        <td class="text-center">
+                            {% if req.status == 'Pending' %}
+                            <a href="{% url 'send_donation_date' req.id %}" class="btn btn-success btn-sm me-2">
+                                Send Date
+                            </a>
+                            <a href="{% url 'reject_donor_request' req.id %}"
+                                onclick="return confirm('Are you sure you want to reject this donor request? This action cannot be undone.')"
+                                class="btn btn-danger btn-sm">Reject</a>
+
+                            {% elif req.status == 'Approved' %}
+                            <button class="btn btn-info btn-sm" onclick="toggleDetails('{{ req.id }}')">
+                                Date Sent
+                            </button>
+
+                            {% elif req.status == 'Accepted' %}
+                            <button class="btn btn-success btn-sm" onclick="toggleDetails('{{ req.id }}')">
+                                Accepted
+                            </button>
+
+                            {% elif req.status == 'Donated' %}
+                            <span class="badge bg-secondary">Donated</span>
+
+                            {% elif req.status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <!-- ✅ Hidden Donation Details Row -->
+                    <tr id="details-{{ req.id }}" class="donation-details-row" style="display:none;">
+                        <td colspan="5">
+                            <div class="ddt">
+                                <ul class="ddt_ul">
+                                    <li><strong>Donation Date:</strong> {{ req.donation_date|default:"Not assigned" }}</li>
+                                    <li><strong>Donation Time:</strong> {{ req.donation_time|default:"Not assigned" }}</li>
+                                    <li><strong>Submitted On:</strong> {{ req.submitted_on|date:"d M Y, H:i" }}</li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-muted text-center">No donor requests found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-muted mt-3">No donor requests available.</p>
+        {% endif %}
+
+        <div class="text-center mt-3">
+            <a href="{% url 'manage_request' %}" class="btn btn-outline-secondary">
+                <i class="fa fa-arrow-left"></i> Back
+            </a>
+        </div>
     </div>
 </div>
+
+<!-- ✅ Script to toggle hidden details -->
+<script>
+    function toggleDetails(id) {
+        const row = document.getElementById('details-' + id);
+        if (row.style.display === 'none') {
+            row.style.display = 'table-row';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+</script>
+
 {% endblock %}

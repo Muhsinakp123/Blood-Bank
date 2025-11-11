@@ -2,49 +2,49 @@
 {% block title %}Manage Blood Stock{% endblock %}
 
 {% block content %}
-<div class="stock-page fade-in">
+<!-- Dashboard Header -->
+<div class="dashboard-header fade-in">
+  <h2><i class="fa fa-tint me-2"></i> Manage Blood Stock</h2>
+</div>
 
-  <!-- Page Header -->
-  <div class="dashboard-header">
-    <h2><i class="fa fa-tint me-2"></i> Manage Blood Stock</h2>
-  </div>
+<!-- Main Content Card -->
+<div class="hospital-stock-card fade-in">
+  <h3 class="stock-title">
+    🩸 Blood Stock Overview
+  </h3>
 
   <!-- Add Button -->
-  <div class="d-flex justify-content-end mt-4">
-    <a href="{% url 'add_stock' %}" class="btn add-stock-btn shadow-sm">
+  <div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'add_stock' %}" class="show-btn">
       <i class="fa fa-plus-circle me-2"></i> Add Blood Stock
     </a>
   </div>
 
-  <!-- Stock Table Card -->
-  <div class="card stock-card mt-4 p-4">
-    <h4 class="text-center text-danger mb-4">
-      <i class="fa fa-heartbeat me-2"></i> Current Blood Stock
-    </h4>
-
-    {% if stocks %}
-    <div class="table-responsive">
-      <table class="table stock-table text-center align-middle">
-        <thead>
-          <tr>
-            <th>Blood Group</th>
-            <th>Available Units</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for stock in stocks %}
-          <tr>
-            <td class="blood-type">{{ stock.blood_group }}</td>
-            <td class="units">{{ stock.units_available }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% else %}
-    <p class="text-center text-muted mt-3">No blood stock available yet.</p>
-    {% endif %}
+  {% if stocks %}
+  <div class="table-responsive">
+    <table class="table custom-table align-middle text-center">
+      <thead>
+        <tr>
+          <th>Blood Group</th>
+          <th>Available Units</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for stock in stocks %}
+        <tr>
+          <td class="fw-semibold text-dark">{{ stock.blood_group }}</td>
+          <td>{{ stock.units_available }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="2" class="text-muted py-4">No blood stock available yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-
+  {% else %}
+  <p class="text-center text-muted mt-3">No blood stock available yet.</p>
+  {% endif %}
 </div>
 {% endblock %}

@@ -12,7 +12,7 @@ from .forms import DonorAppointmentRequestForm
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Sum
 from django.db import models
-from datetime import date
+from datetime import date,timedelta
 from django.utils import timezone
 import io
 import base64
@@ -57,11 +57,22 @@ def signup(request):
             role = request.POST.get('role')
             Profile.objects.create(user=user, role=role)
 
-            return redirect('login')
+            login(request, user)
+
+            #  Redirect based on role
+            if role == 'donor':
+                return redirect('donor_form')  # your donor dashboard url name
+            elif role == 'hospital':
+                return redirect('hospital_form')
+            elif role == 'patient':
+                return redirect('patient_form')
+            else:
+                return redirect('home')  # fallback if no role matched
     else:
         form = UserForm()
 
     return render(request, 'signup.html', {'form': form})
+
 
 
 # --- Login ---
@@ -267,11 +278,13 @@ def hospital_stock(request, id=None):
     })
 
 # ➕ Add Stock
+
 @login_required
 def add_stock(request):
     is_admin = request.user.is_superuser
     hospital = None
 
+    # Determine if user is hospital or admin
     if not is_admin:
         hospital = get_object_or_404(HospitalProfile, user=request.user)
 
@@ -281,6 +294,7 @@ def add_stock(request):
             blood_group = form.cleaned_data['blood_group']
             units = form.cleaned_data['units_available']
 
+            # --- ADMIN LOGIC ---
             if is_admin:
                 stock, created = BloodStock.objects.get_or_create(
                     hospital=None,
@@ -289,40 +303,45 @@ def add_stock(request):
                 )
                 stock.units_available += units
                 stock.save()
-                messages.success(request, f"{units} units added to admin stock for {blood_group}.")
-                return redirect('manage_stock')
-            else:
-                existing_stock = BloodStock.objects.filter(hospital=hospital, blood_group=blood_group).first()
-                if existing_stock:
-                    existing_stock.units_available += units
-                    existing_stock.save()
-                    messages.success(request, f"{units} units added to existing stock of {blood_group}.")
-                else:
-                    new_stock = form.save(commit=False)
-                    new_stock.hospital = hospital
-                    new_stock.save()
-                    messages.success(request, f"New blood group {blood_group} added with {units} units.")
+                messages.success(request, f"{units} units added to Admin stock for {blood_group}.")
+                return redirect('manage_stock_admin')
 
-              # 🩸 Create one shared notification for all patients
-            title = "🩸 New Blood Stock Added"
-            message = f"{hospital.hospital_name} added {units} units of {blood_group} to their stock."
-            exists = Notification.objects.filter(
-            title=title,
-            message=message,
-            role='patient'
-            ).exists()
-            if not exists:
-                Notification.objects.create(
-                    role='patient',
-                    title=title,
-                    message=message,
-                   type='info'
-                   )
+            # --- HOSPITAL LOGIC ---
+            else:
+                stock, created = BloodStock.objects.get_or_create(
+                    hospital=hospital,
+                    blood_group=blood_group,
+                    defaults={'units_available': 0}
+                )
+                stock.units_available += units
+                stock.save()
+
+                if created:
+                    messages.success(request, f"New blood group {blood_group} added with {units} units.")
+                else:
+                    messages.success(request, f"{units} units added to existing stock of {blood_group}.")
+
+                # Create notification only once
+                title = "🩸 New Blood Stock Added"
+                message = f"{hospital.hospital_name} added {units} units of {blood_group} to their stock."
+
+                exists = Notification.objects.filter(
+                    title=title, message=message, role='patient'
+                ).exists()
+
+                if not exists:
+                    Notification.objects.create(
+                        role='patient',
+                        title=title,
+                        message=message,
+                        type='info'
+                    )
+
                 return redirect('hospital_stock', id=hospital.id)
     else:
         form = BloodStockForm()
 
-    cancel_url = 'manage_stock' if is_admin else 'hospital_dashboard'
+    cancel_url = 'manage_stock_admin' if is_admin else 'hospital_dashboard'
     return render(request, 'add_stock.html', {'form': form, 'cancel_url': cancel_url})
 
 
@@ -476,12 +495,6 @@ def donor_appoinment(request):
         form = DonorAppointmentRequestForm()
 
     return render(request, 'donor_appoinment.html', {'form': form})
-
-@login_required
-def donation_status(request):
-    donor_requests = DonorAppointmentRequest.objects.filter(donor=request.user).order_by('-submitted_on')
-    return render(request, 'donation_status.html', {'donor_requests': donor_requests})
-
 
 
 # ---------- 1. Donation History ----------
@@ -760,15 +773,10 @@ def patient_profile_delete(request, id):
     messages.warning(request, 'Your profile has been deleted.')
     return redirect('login') 
 
-
-from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Sum
-
 # ✅ Restrict access to superusers only
 def admin_required(view_func):
     return user_passes_test(lambda u: u.is_superuser, login_url='login')(view_func)
 
-from .models import Notification
 
 @admin_required
 def admin_dashboard(request):
@@ -789,22 +797,49 @@ def admin_dashboard(request):
     })
 
 
-
 @admin_required
 def view_users(request):
     hospitals = HospitalProfile.objects.all()
     donors = DonorProfile.objects.all()
+
+    # Fetch all patients
     patients = PatientProfile.objects.all()
+
+    # Combine with their latest blood request info
+    patient_data = []
+    for patient in patients:
+        # Get the most recent request (if any)
+        request_info = PatientBloodRequest.objects.filter(patient=patient).order_by('-request_date').first()
+
+        patient_data.append({
+            'full_name': patient.full_name,
+            'age': patient.age,
+            'gender': patient.gender,
+            'blood_group': patient.blood_group,
+            'contact_number': patient.contact_number,
+            'email': patient.email,
+            'address': patient.address,
+            'hospital_name': patient.hospital_name,
+            'disease_condition': patient.disease_condition,
+            'notes': patient.notes,
+            'prescription': patient.prescription,
+
+            # Request-related data
+            'units_Requested': request_info.units_Requested if request_info else '-',
+            'date_Required': request_info.date_Required if request_info else '-',
+        })
 
     return render(request, 'view_users.html', {
         'hospitals': hospitals,
         'donors': donors,
-        'patients': patients
+        'patients': patient_data
     })
+
 
 @admin_required
 def manage_stock_admin(request):
-    stocks = BloodStock.objects.select_related('hospital').all().order_by('hospital__hospital_name')
+    # Show only admin-level stock (not hospital stocks)
+    stocks = BloodStock.objects.filter(hospital__isnull=True).order_by('blood_group')
     return render(request, 'manage_stock.html', {'stocks': stocks})
 
 @admin_required
@@ -816,11 +851,6 @@ def admin_hospital_stock(request):
 def view_reports(request):
     donations = BloodDonation.objects.select_related('donor', 'patient', 'hospital').all()
     return render(request, 'view_reports.html', {'donations': donations})
-
-@login_required
-def manage_stock(request):
-    stocks = BloodStock.objects.filter(hospital__isnull=True)
-    return render(request, 'manage_stock.html', {'stocks': stocks})
 
 @login_required
 def notifications(request):
@@ -843,49 +873,37 @@ def notifications(request):
 
 @login_required
 def manage_request(request):
-    request_type = request.GET.get('type', None)  # hospital / patient / donor
+    today = timezone.now().date()
 
-    hospital_requests = BloodRequest.objects.filter(status='Pending')
-    patient_requests = PatientProfile.objects.all()  # adjust if patients send blood request
-    donor_requests = DonorAppointmentRequest.objects.filter(status='Pending')
+    # Auto-update expired on load
+    BloodRequest.objects.filter(status='Pending', date_required__lt=today).update(status='Expired')
+    PatientBloodRequest.objects.filter(status='Pending', date_Required__lt=today).update(status='Expired')
 
-    # Default context (only show cards)
+    hospital_pending = BloodRequest.objects.filter(status='Pending').count()
+    patient_pending = PatientBloodRequest.objects.filter(status='Pending').count()
+    donor_pending = DonorAppointmentRequest.objects.filter(status='Pending').count()
+
     context = {
-        'show_table': False,
-        'hospital_count': hospital_requests.count(),
-        'patient_count': patient_requests.count(),
-        'donor_count': donor_requests.count(),
+        'hospital_count': hospital_pending,
+        'patient_count': patient_pending,
+        'donor_count': donor_pending,
+        'show_table': False
     }
 
-    # If user clicked a card
-    if request_type == 'hospital':
-        context.update({
-            'show_table': True,
-            'table_title': "Hospital Requests",
-            'requests': hospital_requests,
-            'type': 'hospital',
-        })
-    elif request_type == 'donor':
-        context.update({
-            'show_table': True,
-            'table_title': "Donor Requests",
-            'requests': donor_requests,
-            'type': 'donor',
-        })
-    elif request_type == 'patient':
-        context.update({
-            'show_table': True,
-            'table_title': "Patient Requests",
-            'requests': patient_requests,
-            'type': 'patient',
-        })
+    req_type = request.GET.get('type')
+    if req_type == 'hospital':
+        context.update({'show_table': True, 'requests': BloodRequest.objects.all(), 'table_title': 'Hospital Requests'})
+    elif req_type == 'patient':
+        context.update({'show_table': True, 'requests': PatientBloodRequest.objects.all(), 'table_title': 'Patient Requests'})
+    elif req_type == 'donor':
+        context.update({'show_table': True, 'requests': DonorAppointmentRequest.objects.all(), 'table_title': 'Donor Requests'})
 
     return render(request, 'manage_requests.html', context)
 
 
 @login_required
 def approve_request(request, id):
-    # Try to find request in either Hospital or Patient models
+    today = timezone.now().date()
     blood_request = BloodRequest.objects.filter(id=id).first()
     patient_request = PatientBloodRequest.objects.filter(id=id).first()
 
@@ -893,50 +911,44 @@ def approve_request(request, id):
         messages.error(request, "Request not found.")
         return redirect('manage_request')
 
-    today = timezone.now().date()
-
-    # --- If Hospital Request ---
+    # --- Hospital Request ---
     if blood_request:
-        blood_request.status = 'Approved'
-        blood_request.save()
+        r = blood_request
+        r.status = 'Approved'
+        if r.date_required < today:
+            r.status = 'Completed'
+        r.save()
 
-        # Auto-complete if date expired
-        if blood_request.date_required < today:
-            blood_request.status = 'Completed'
-            blood_request.save()
-
-        # ✅ Notify Hospital
         Notification.objects.create(
-            recipient=blood_request.hospital.user,
+            recipient=r.hospital.user,
             role='hospital',
-            title="Blood Request Approved ✅",
-            message=f"Your blood request for {blood_request.blood_group} has been approved by Admin."
+            title="✅ Blood Request Approved",
+            message=f"Your blood request for {r.blood_group} has been approved by the admin."
         )
 
-        messages.success(request, "Hospital blood request approved successfully.")
+        messages.success(request, f"Hospital blood request for {r.blood_group} approved successfully.")
 
-    # --- If Patient Request ---
+    # --- Patient Request ---
     elif patient_request:
-        patient_request.status = 'Approved'
-        patient_request.save()
+        r = patient_request
+        r.status = 'Approved'
 
-        # Auto-complete if date expired
-        if patient_request.date_required < today:
-            patient_request.status = 'Completed'
-            patient_request.save()
+        # Handle custom date field safely
+        date_required = getattr(r, 'date_Required', None)
+        if date_required and date_required < today:
+            r.status = 'Completed'
+        r.save()
 
-        # ✅ Notify Patient
         Notification.objects.create(
-            recipient=patient_request.patient.user,
+            recipient=r.patient.user,
             role='patient',
-            title="🎉 Blood Request Approved",
-            message=f"Good news! Your blood request for {patient_request.blood_group} has been approved by Admin."
+            title="✅ Blood Request Approved",
+            message=f"Your blood request for {r.patient.blood_group} has been approved by the admin."
         )
 
-        messages.success(request, "Patient blood request approved successfully.")
+        messages.success(request, f"Patient blood request for {r.patient.blood_group} approved successfully.")
 
     return redirect('manage_request')
-
 
 
 @login_required
@@ -953,31 +965,33 @@ def reject_request(request, id):
     if blood_request:
         hospital_user = blood_request.hospital.user
         blood_group = blood_request.blood_group
+        hospital_name = blood_request.hospital.hospital_name
         blood_request.delete()
 
         Notification.objects.create(
             recipient=hospital_user,
             role='hospital',
             title="❌ Blood Request Rejected",
-            message=f"Your blood request for {blood_group} has been rejected by Admin."
+            message=f"Your blood request for {blood_group} has been rejected by the admin."
         )
 
-        messages.warning(request, "Hospital blood request rejected and deleted successfully.")
+        messages.warning(request, f"Hospital blood request from {hospital_name} for {blood_group} has been rejected and deleted successfully.")
 
     # --- Patient Request ---
     elif patient_request:
         patient_user = patient_request.patient.user
-        blood_group = patient_request.blood_group
+        blood_group = patient_request.patient.blood_group  # ✅ fixed field
+        patient_name = patient_request.patient.full_name
         patient_request.delete()
 
         Notification.objects.create(
             recipient=patient_user,
             role='patient',
             title="❌ Blood Request Rejected",
-            message=f"Sorry! Your blood request for {blood_group} was rejected by Admin."
+            message=f"Sorry {patient_name}, your blood request for {blood_group} was rejected by the admin."
         )
 
-        messages.warning(request, "Patient blood request rejected and deleted successfully.")
+        messages.warning(request, f"Patient blood request from {patient_name} for {blood_group} has been rejected and deleted successfully.")
 
     return redirect('manage_request')
 
@@ -1025,27 +1039,35 @@ def hospital_requests(request):
     today = timezone.now().date()
 
     for r in requests:
+        # ✅ Auto-complete if approved and expired
         if r.status == 'Approved' and r.date_required < today:
             r.status = 'Completed'
             r.save()
+        # ✅ Auto-expire if pending and expired
+        elif r.status == 'Pending' and r.date_required < today:
+            r.status = 'Expired'
+            r.save()
 
     return render(request, 'admin_hospital_requests.html', {'requests': requests})
+
 @login_required
 def patient_requests(request):
     requests = PatientBloodRequest.objects.all()
+    today = timezone.now().date()
 
-    # Automatically mark expired requests as "Completed"
     for req in requests:
-        if req.status == "Approved" and req.date_Required < date.today():
-            req.status = "Completed"
+        if req.status == 'Approved' and req.date_Required < today:
+            req.status = 'Completed'
+            req.save()
+        elif req.status == 'Pending' and req.date_Required < today:
+            req.status = 'Expired'
             req.save()
 
     return render(request, "admin_patient_requests.html", {"requests": requests})
 
-
-@login_required
-def donor_requests(request):
-    requests = DonorAppointmentRequest.objects.select_related('donor').order_by('-submitted_on')
+@login_required 
+def donor_requests(request): 
+    requests = DonorAppointmentRequest.objects.select_related('donor').order_by('-submitted_on') 
     return render(request, 'admin_donor_requests.html', {'requests': requests})
 
 @login_required
@@ -1092,25 +1114,106 @@ def send_donation_date(request, id):
     if request.method == 'POST':
         form = DonationDateForm(request.POST)
         if form.is_valid():
-            req.status = "Approved"
-            req.remarks = f"Donation scheduled on {form.cleaned_data['donation_date']} at {form.cleaned_data['donation_time']}"
+            req.donation_date = form.cleaned_data['donation_date']
+            req.donation_time = form.cleaned_data['donation_time']
+            req.status = "Date Sent"
+            req.remarks = f"Donation scheduled on {req.donation_date} at {req.donation_time}"
             req.save()
-            messages.success(request, f"Donation date set for {donor_profile.full_name}.")
+
+            Notification.objects.create(
+                recipient=req.donor,
+                role='donor',
+                title="📅 Donation Date Sent",
+                message=f"Your blood donation is scheduled on {req.donation_date} at {req.donation_time}. "
+                        f"<a href='/donor/show_donation_details/{req.id}/' class='btn btn-sm btn-outline-info'>Show</a>"
+            )
+
+            messages.success(request, f"Donation date sent to {donor_profile.full_name}.")
             return redirect('donor_requests')
     else:
         form = DonationDateForm()
 
-    return render(request, 'send_donation_date.html', {
-        'form': form,
-        'donor': donor_profile
-    })
+    return render(request, 'send_donation_date.html', {'form': form, 'donor': donor_profile})
+
+
+@login_required
+def show_donation_details(request, id):
+    req = get_object_or_404(DonorAppointmentRequest, id=id, donor=request.user)
+    return render(request, 'show_donation_details.html', {'req': req})
+
+
+@login_required
+def donor_accept_date(request, id):
+    req = get_object_or_404(DonorAppointmentRequest, id=id, donor=request.user)
+
+    if req.status == "Date Sent":
+        req.status = "Accepted"
+        req.save()
+
+        # Notify Admin
+        Notification.objects.create(
+            role='admin',
+            title="✅ Donor Accepted Date",
+            message=f"{request.user.username} accepted the donation date ({req.donation_date})."
+        )
+
+        Notification.objects.create(
+            recipient=request.user,
+            role='donor',
+            title="✅ Donation Date Accepted",
+            message=f"You accepted your blood donation scheduled on {req.donation_date}."
+        )
+
+        messages.success(request, "You accepted the donation date successfully.")
+    return redirect('donor_dashboard')
+
+
+@login_required
+def donor_reschedule_request(request, id):
+    req = get_object_or_404(DonorAppointmentRequest, id=id, donor=request.user)
     
+    if req.status == "Date Sent":
+        req.status = "Pending"
+        req.save()
+
+        Notification.objects.create(
+            role='admin',
+            title="🔄 Donor Requested Reschedule",
+            message=f"{request.user.username} requested to reschedule their donation."
+        )
+
+        Notification.objects.create(
+            recipient=request.user,
+            role='donor',
+            title="📅 Reschedule Request Sent",
+            message="You requested to reschedule your blood donation appointment."
+        )
+
+        messages.warning(request, "Your reschedule request has been sent.")
+    return redirect('donor_dashboard')
+
+
+
 @login_required
 def reject_donor_request(request, id):
     req = get_object_or_404(DonorAppointmentRequest, id=id)
     donor_profile = DonorProfile.objects.filter(user=req.donor).first()
-    req.status = "Rejected"
-    req.save()
-    messages.error(request, f"Donation request by {donor_profile.full_name} has been rejected.")
+
+    req.delete()
+
+    Notification.objects.create(
+        recipient=req.donor,
+        role='donor',
+        title="❌ Donation Request Rejected",
+        message=f"Your blood donation request has been declined by the admin."
+    )
+
+    messages.error(request, f"Donation request by {donor_profile.full_name} has been permanently removed.")
     return redirect('donor_requests')
 
+
+def auto_update_donations():
+    today = timezone.now().date()
+    DonorAppointmentRequest.objects.filter(
+        status='Accepted', donation_date__lt=today
+    ).update(status='Donated')

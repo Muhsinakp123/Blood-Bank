@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Profile,HospitalProfile,DonorProfile,PatientProfile,Contact,BloodStock,BloodRequest,BloodDonation,BloodDonationCamp,DonorAppointmentRequest,Notification
+from .models import Profile,HospitalProfile,DonorProfile,PatientProfile,Contact,BloodStock,BloodRequest,BloodDonation,BloodDonationCamp,DonorAppointmentRequest,Notification,PatientBloodRequest
 
 # Register your models here.
 
@@ -15,5 +15,6 @@ admin.site.register(BloodDonation),
 admin.site.register(BloodDonationCamp),
 admin.site.register(DonorAppointmentRequest),
 admin.site.register(Notification),
+admin.site.register(PatientBloodRequest),
 
 
