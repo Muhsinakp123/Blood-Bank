@@ -435,11 +435,6 @@ def update_camp(request, id):
         form = BloodDonationCampForm(instance=camp)
     return render(request, 'update_camp.html', {'form': form})
 
-@login_required
-def delete_camp(request, id):
-    camp = get_object_or_404(BloodDonationCamp, id=id)
-    camp.delete()
-    return redirect('blood_camp')
 
 @login_required
 def donor_dashboard(request):
@@ -782,10 +777,17 @@ def admin_required(view_func):
 def admin_dashboard(request):
     total_donors = DonorProfile.objects.count()
     total_hospitals = HospitalProfile.objects.count()
-    total_requests = BloodRequest.objects.count()
     total_stock_units = BloodStock.objects.aggregate(total=Sum('units_available'))['total'] or 0
 
-    # Count unread notifications for admin
+    # ✅ Only count requests that still need admin attention
+    blood_requests_hospitals = BloodRequest.objects.filter(status__in=['Pending']).count()
+    blood_requests_patients = PatientBloodRequest.objects.filter(status__in=['Pending']).count()
+    total_donor_requests = DonorAppointmentRequest.objects.filter(status__in=['Pending']).count()
+
+    # Combine active requests only
+    total_requests = blood_requests_hospitals + blood_requests_patients + total_donor_requests
+
+    # 🔔 Count unread notifications
     notification_count = Notification.objects.filter(role='admin', is_read=False).count()
 
     return render(request, 'admin_dashboard.html', {
@@ -797,20 +799,18 @@ def admin_dashboard(request):
     })
 
 
+
 @admin_required
 def view_users(request):
     hospitals = HospitalProfile.objects.all()
     donors = DonorProfile.objects.all()
-
-    # Fetch all patients
     patients = PatientProfile.objects.all()
+    camps = BloodDonationCamp.objects.all().order_by('-date')  
 
-    # Combine with their latest blood request info
+    # Combine patient data with their latest request info
     patient_data = []
     for patient in patients:
-        # Get the most recent request (if any)
         request_info = PatientBloodRequest.objects.filter(patient=patient).order_by('-request_date').first()
-
         patient_data.append({
             'full_name': patient.full_name,
             'age': patient.age,
@@ -823,8 +823,6 @@ def view_users(request):
             'disease_condition': patient.disease_condition,
             'notes': patient.notes,
             'prescription': patient.prescription,
-
-            # Request-related data
             'units_Requested': request_info.units_Requested if request_info else '-',
             'date_Required': request_info.date_Required if request_info else '-',
         })
@@ -832,8 +830,10 @@ def view_users(request):
     return render(request, 'view_users.html', {
         'hospitals': hospitals,
         'donors': donors,
-        'patients': patient_data
+        'patients': patient_data,
+        'camps': camps,  
     })
+
 
 
 @admin_required
@@ -849,8 +849,21 @@ def admin_hospital_stock(request):
 
 @admin_required
 def view_reports(request):
-    donations = BloodDonation.objects.select_related('donor', 'patient', 'hospital').all()
-    return render(request, 'view_reports.html', {'donations': donations})
+    # ✅ Fetch all completed/accepted hospital & patient requests
+    hospital_reports = BloodRequest.objects.filter(status__in=['Approved', 'Completed']).order_by('-id')
+    patient_reports = PatientBloodRequest.objects.filter(status__in=['Approved', 'Completed']).order_by('-id')
+
+    # ✅ Fetch all donor requests that were accepted or donated
+    donor_reports = DonorAppointmentRequest.objects.filter(status__in=['Accepted', 'Donated']).order_by('-id')
+
+    # Combine all data for the template
+    context = {
+        'hospital_reports': hospital_reports,
+        'patient_reports': patient_reports,
+        'donor_reports': donor_reports,
+    }
+
+    return render(request, 'view_reports.html', context)
 
 @login_required
 def notifications(request):

@@ -410,6 +410,7 @@
   text-decoration: none;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+  margin-bottom: 12px;
 }
 
 /* Hover effect for both buttons */
@@ -443,6 +444,9 @@
 .back-btn:hover {
   background-color: #8c0000;
   transform: translateY(-2px);
+}
+.center {
+  text-align: center;
 }
 
 /* ---------- Animations ---------- */

@@ -1,0 +1,83 @@
+{% extends 'admin_master.html' %}
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <div class="dashboard-header mb-4 text-center">
+            <h2><i class="fa fa-file-alt text-danger"></i> Reports Overview</h2>
+        </div>
+        <p class="text-muted">All approved and completed blood requests and donations.</p>
+
+        <!-- 🏥 Hospital & Patient Requests -->
+        <div class="hospital-stock-card fade-in">
+            <h3 class="stock-title"><i class="fa fa-tint"></i> Blood Request History</h3>
+
+            {% if hospital_reports or patient_reports %}
+            <div class="table-responsive">
+                <table class="table custom-table align-middle text-center">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>Requester</th>
+                            <th>Role</th>
+                            <th>Blood Group</th>
+                            <th>Date Requested</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in hospital_reports %}
+                        <tr>
+                            <td>{{ req.hospital.hospital_name }}</td>
+                            <td>Hospital</td>
+                            <td>{{ req.blood_group }}</td>
+                            <td>{{ req.date_required|date:"d M Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% for req in patient_reports %}
+                        <tr>
+                            <td>{{ req.patient.user.username }}</td>
+                            <td>Patient</td>
+                            <td>{{ req.patient.blood_group }}</td>
+                            <td>{{ req.date_Required|date:"d M Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted text-center">No hospital or patient requests found.</p>
+            {% endif %}
+        </div>
+
+        <!-- 🩸 Donor Requests -->
+        <div class="hospital-stock-card fade-in">
+            <h3 class="stock-title"><i class="fa fa-heartbeat"></i> Donor Donation History</h3>
+
+            {% if donor_reports %}
+            <div class="table-responsive">
+                <table class="table custom-table align-middle text-center">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>Donor</th>
+                            <th>Blood Group</th>
+                            <th>Donated Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in donor_reports %}
+                        <tr>
+                            <td>{{ req.donor.username }}</td>
+                            <td>{{ req.donor.donorprofile.blood_group }}</td>
+                            <td>{{ req.donation_date|date:"d M Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted text-center">No donor history found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

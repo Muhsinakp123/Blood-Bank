@@ -253,6 +253,7 @@ body {
   margin-top: 30px;
   box-shadow: 0 4px 15px rgba(179, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  margin-bottom: 25px;
 }
 
 .hospital-stock-card:hover {
@@ -646,4 +647,10 @@ body {
 }
 .ddt_ul {
   list-style: none;
+}
+
+.text-muted {
+  font-size: 17px;
+  color: gray;
+  margin-left: 5px;
 }
