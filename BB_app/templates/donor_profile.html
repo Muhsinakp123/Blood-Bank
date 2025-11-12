@@ -16,7 +16,7 @@
       <!-- Button Row -->
       <div class="button-row">
         <button type="submit" class="btn-save">💾 Update</button>
-        <a href="{% url 'donor_profile_delete' donor.id %}" class="btn_delete" onclick="return confirmDelete();">🗑 Delete</a>
+        <a href="{% url 'donor_profile_delete' donor.id %}" class="btn_delete" onclick="return confirmDelete();">🗑 Delete Account</a>
 
       </div>
 
@@ -27,7 +27,7 @@
 
 <script>
   function confirmDelete() {
-    return confirm("⚠️ Are you sure you want to delete your donor profile?");
+    return confirm("⚠️ Are you sure you want to permanently delete your account? This action cannot be undone.");
   }
 </script>
 

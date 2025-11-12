@@ -466,11 +466,15 @@ def donor_profile(request):
 def donor_profile_delete(request, donor_id):
     donor = get_object_or_404(DonorProfile, id=donor_id)
 
-    if request.method == 'POST':
-        donor.delete()
-        return redirect('donor_dashboard') 
+    # Ensure only the logged-in donor can delete their own profile
+    if request.user != donor.user:
+        messages.error(request, "You are not authorized to delete this profile.")
+        return redirect('donor_dashboard')
 
-    return render(request, 'confirm_delete.html', {'donor': donor})
+    donor.user.delete()  # This automatically deletes both user and linked donor profile
+    messages.warning(request, 'Your account and profile have been permanently deleted.')
+    return redirect('login')
+
 
 @login_required
 def donor_appoinment(request):
@@ -501,7 +505,7 @@ def donation_history(request):
 
 # ---------- 2. Camps ----------
 def donor_camp(request):
-    camps = BloodDonationCamp.objects.all().order_by('-date')
+    camps = BloodDonationCamp.objects.filter(date__gte=date.today()).order_by('date')
     return render(request, 'donor_camp.html', {'camps': camps})
 
 
@@ -741,10 +745,20 @@ def delete_patient_request(request, request_id):
 
 
 @login_required
-def received_history(request):
-    patient = get_object_or_404(PatientProfile, user=request.user)
-    received = BloodDonation.objects.filter(patient=patient).order_by('-date_donated')
-    return render(request, 'received_history.html', {'received': received})
+def patient_received_history(request):
+    patient = PatientProfile.objects.get(user=request.user)
+    received_requests = PatientBloodRequest.objects.filter(patient=patient, status='Completed')
+
+    history = [
+        {
+            'requested_date': req.request_date,
+            'received_date': req.date_Required,
+            'units': req.units_Requested,
+        }
+        for req in received_requests
+    ]
+
+    return render(request, 'received_history.html', {'history': history})
 
 @login_required
 def patient_profile(request):
@@ -764,9 +778,23 @@ def patient_profile(request):
 @login_required
 def patient_profile_delete(request, id):
     patient = get_object_or_404(PatientProfile, id=id)
+
+    # Ensure only the logged-in user can delete their own profile
+    if request.user != patient.user:
+        messages.error(request, "You are not authorized to delete this profile.")
+        return redirect('patient_dashboard')
+
+    # Get the related user object before deleting
+    user = patient.user
+
+    # Delete the patient profile
     patient.delete()
-    messages.warning(request, 'Your profile has been deleted.')
-    return redirect('login') 
+
+    # Delete the user account itself
+    user.delete()
+
+    messages.warning(request, 'Your account and profile have been deleted successfully.')
+    return redirect('login')
 
 # ✅ Restrict access to superusers only
 def admin_required(view_func):

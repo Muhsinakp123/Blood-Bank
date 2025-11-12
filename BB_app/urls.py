@@ -35,11 +35,12 @@ urlpatterns = [
     path('patient/search_blood/', views.search_blood, name='search_blood'),
     path('patient/patient_blood_request/', views.patient_blood_request, name='patient_blood_request'),
     path('patient/track_request/', views.track_request, name='track_request'),
-    path('patient/received_history/', views.received_history, name='received_history'),
+    path('patient/received-history/', views.patient_received_history, name='patient_received_history'),
     path('patient/profile/', views.patient_profile, name='patient_profile'),
     path('patient/profile/delete/<int:id>/', views.patient_profile_delete, name='patient_profile_delete'),
     path('patient/edit_request/<int:request_id>/', views.edit_patient_request, name='edit_patient_request'),
     path('patient/delete_request/<int:request_id>/', views.delete_patient_request, name='delete_patient_request'),
+    
 
 
     path('view/hospital/', views.view_hospital, name='view_hospital'),
