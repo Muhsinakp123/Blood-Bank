@@ -629,7 +629,18 @@ def mark_notification_read(request, notification_id):
 
 @login_required
 def generate_report(request):
-    donations = BloodDonation.objects.select_related('donor', 'patient').all()
+    today = timezone.now().date()
+
+    # Only hospital blood requests that were approved and the required date has passed
+    donations = BloodRequest.objects.filter(
+        status='Approved',
+        date_required__lte=today
+    ).values(
+        'request_date',
+        'blood_group',
+        'units_requested',
+        'date_required'
+    ).order_by('-date_required')
 
     return render(request, 'generate_report.html', {'donations': donations})
 
@@ -932,14 +943,30 @@ def manage_request(request):
     }
 
     req_type = request.GET.get('type')
+
     if req_type == 'hospital':
-        context.update({'show_table': True, 'requests': BloodRequest.objects.all(), 'table_title': 'Hospital Requests'})
+        context.update({
+            'show_table': True,
+            'requests': BloodRequest.objects.exclude(status='Rejected'),
+            'table_title': 'Hospital Requests'
+        })
+
     elif req_type == 'patient':
-        context.update({'show_table': True, 'requests': PatientBloodRequest.objects.all(), 'table_title': 'Patient Requests'})
+        context.update({
+            'show_table': True,
+            'requests': PatientBloodRequest.objects.exclude(status='Rejected'),
+            'table_title': 'Patient Requests'
+        })
+
     elif req_type == 'donor':
-        context.update({'show_table': True, 'requests': DonorAppointmentRequest.objects.all(), 'table_title': 'Donor Requests'})
+        context.update({
+            'show_table': True,
+            'requests': DonorAppointmentRequest.objects.exclude(status='Rejected'),
+            'table_title': 'Donor Requests'
+        })
 
     return render(request, 'manage_requests.html', context)
+
 
 
 @login_required
@@ -1007,7 +1034,10 @@ def reject_request(request, id):
         hospital_user = blood_request.hospital.user
         blood_group = blood_request.blood_group
         hospital_name = blood_request.hospital.hospital_name
-        blood_request.delete()
+
+        # Mark as rejected instead of deleting
+        blood_request.status = "Rejected"
+        blood_request.save()
 
         Notification.objects.create(
             recipient=hospital_user,
@@ -1016,14 +1046,20 @@ def reject_request(request, id):
             message=f"Your blood request for {blood_group} has been rejected by the admin."
         )
 
-        messages.warning(request, f"Hospital blood request from {hospital_name} for {blood_group} has been rejected and deleted successfully.")
+        messages.warning(
+            request,
+            f"Hospital blood request from {hospital_name} for {blood_group} has been rejected."
+        )
 
-    # --- Patient Request ---
+    # --- Patient Request (updated: do not delete) ---
     elif patient_request:
         patient_user = patient_request.patient.user
-        blood_group = patient_request.patient.blood_group  # ✅ fixed field
+        blood_group = patient_request.patient.blood_group
         patient_name = patient_request.patient.full_name
-        patient_request.delete()
+
+        # 🔥 FIX: Mark as rejected instead of deleting
+        patient_request.status = "Rejected"
+        patient_request.save()
 
         Notification.objects.create(
             recipient=patient_user,
@@ -1032,9 +1068,13 @@ def reject_request(request, id):
             message=f"Sorry {patient_name}, your blood request for {blood_group} was rejected by the admin."
         )
 
-        messages.warning(request, f"Patient blood request from {patient_name} for {blood_group} has been rejected and deleted successfully.")
+        messages.warning(
+            request,
+            f"Patient blood request from {patient_name} for {blood_group} has been rejected."
+        )
 
     return redirect('manage_request')
+
 
 @login_required
 def delete_camp(request, camp_id):
@@ -1076,24 +1116,27 @@ def delete_camp(request, camp_id):
 
 @login_required
 def hospital_requests(request):
-    requests = BloodRequest.objects.all().order_by('-date_required')
+    # Exclude rejected requests
+    requests = BloodRequest.objects.exclude(status='Rejected').order_by('-date_required')
     today = timezone.now().date()
 
     for r in requests:
-        # ✅ Auto-complete if approved and expired
+        # Auto-complete if approved and expired
         if r.status == 'Approved' and r.date_required < today:
             r.status = 'Completed'
             r.save()
-        # ✅ Auto-expire if pending and expired
+        # Auto-expire if pending and expired
         elif r.status == 'Pending' and r.date_required < today:
             r.status = 'Expired'
             r.save()
 
     return render(request, 'admin_hospital_requests.html', {'requests': requests})
 
+
 @login_required
 def patient_requests(request):
-    requests = PatientBloodRequest.objects.all()
+    # Exclude rejected requests
+    requests = PatientBloodRequest.objects.exclude(status='Rejected').order_by('-request_date')
     today = timezone.now().date()
 
     for req in requests:
@@ -1105,6 +1148,7 @@ def patient_requests(request):
             req.save()
 
     return render(request, "admin_patient_requests.html", {"requests": requests})
+
 
 @login_required 
 def donor_requests(request): 
@@ -1258,3 +1302,112 @@ def auto_update_donations():
     DonorAppointmentRequest.objects.filter(
         status='Accepted', donation_date__lt=today
     ).update(status='Donated')
+
+
+# @login_required
+# def approve_request(request, id):
+#     today = timezone.now().date()
+
+#     hospital_request = BloodRequest.objects.filter(id=id).first()
+#     patient_request = PatientBloodRequest.objects.filter(id=id).first()
+
+#     # ---------------- HOSPITAL --------------------
+#     if hospital_request:
+#         r = hospital_request
+#         r.status = 'Approved'
+#         r.save()
+
+#         # decrease stock
+#         update_blood_stock(
+#             blood_group=r.blood_group,
+#             amount=r.units_requested,   # <-- FIXED HERE
+#             increase=False
+#         )
+
+#         Notification.objects.create(
+#             recipient=r.hospital.user,
+#             role='hospital',
+#             title="Blood Request Approved",
+#             message=f"Your {r.blood_group} request has been approved."
+#         )
+
+#         messages.success(request, "Hospital request approved.")
+#         return redirect("manage_request")
+
+#     # ---------------- PATIENT ---------------------
+#     if patient_request:
+#         r = patient_request
+#         r.status = 'Approved'
+#         r.save()
+
+#         patient_bg = r.patient.blood_group   # <-- FIXED HERE
+
+#         update_blood_stock(
+#             blood_group=patient_bg,
+#             amount=r.units_Requested,   # <-- FIXED HERE
+#             increase=False
+#         )
+
+#         Notification.objects.create(
+#             recipient=r.patient.user,
+#             role='patient',
+#             title="Blood Request Approved",
+#             message=f"Your {patient_bg} request has been approved."
+#         )
+
+#         messages.success(request, "Patient request approved.")
+#         return redirect("manage_request")
+
+#     messages.error(request, "Request not found.")
+#     return redirect("manage_request")
+
+
+# def update_blood_stock(blood_group, amount, increase=True):
+
+#     if amount is None:
+#         return
+
+#     # get first stock entry only (avoid multiple objects returned)
+#     stock = BloodStock.objects.filter(blood_group=blood_group).first()
+
+#     # if no stock exists, create ONE entry
+#     if not stock:
+#         stock = BloodStock.objects.create(
+#             blood_group=blood_group,
+#             units_available=0
+#         )
+
+#     # update units
+#     if increase:
+#         stock.units_available += amount
+#     else:
+#         stock.units_available = max(0, stock.units_available - amount)
+
+#     stock.save()
+
+
+
+# def auto_update_donations():
+#     today = date.today()
+
+#     donors = DonorAppointmentRequest.objects.filter(
+#         donation_date__lte=today,   # include today's donation
+#         status='Accepted'           # ← YOUR REAL STATUS
+#     )
+
+#     for d in donors:
+#         bg = d.donor.donorprofile.blood_group
+
+#         stock = BloodStock.objects.filter(blood_group=bg).first()
+#         if not stock:
+#             stock = BloodStock.objects.create(
+#                 blood_group=bg,
+#                 units_available=0
+#             )
+
+#         stock.units_available += 1
+#         stock.save()
+
+#         d.status = 'Completed'   # mark as donated
+#         d.save()
+
