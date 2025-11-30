@@ -1,0 +1,86 @@
+{% extends "master.html" %}
+{% load static %}
+{% block title %}Track Request Status{% endblock %}
+{% block content %}
+
+<div class="appointment-form">
+  <div class="form-card">
+    <div class="form-header text-center mb-4">
+      <h2>Track Appointment Requests</h2>
+      <p>Monitor your past and current donation appointment activity.</p>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered text-center" style="border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="padding: 0.6rem;">Submitted On</th>
+            <th style="padding: 0.6rem;">Donation Date</th>
+            <th style="padding: 0.6rem;">Status</th>
+            <th style="padding: 0.6rem;">Remarks</th>
+            <th style="padding: 0.6rem;">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for req in requests_list %}
+          <tr>
+            <td style="padding: 0.6rem;">{{ req.submitted_on|date:"M d, Y" }}</td>
+
+            <td style="padding: 0.6rem;">
+              {% if req.donation_date %}
+                {{ req.donation_date|date:"M d, Y" }}
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+
+            <td style="padding: 0.6rem;">
+              {% if req.status == "Accepted" %}
+                <span class="badge bg-success">Accepted</span>
+              {% elif req.status == "Pending" %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% elif req.status == "Rejected" %}
+                <span class="badge bg-danger">Rejected</span>
+              {% elif req.status == "Date Sent" %}
+                <span class="badge bg-info text-dark">Date Sent</span>
+              {% else %}
+                <span class="badge bg-secondary">Donated</span>
+              {% endif %}
+            </td>
+
+            <td style="padding: 0.6rem;">
+              {{ req.remarks|default:"—" }}
+            </td>
+
+            <td style="padding: 0.6rem;">
+              {% if req.status == "Pending" %}
+                <a href="{% url 'edit_appointment' req.id %}" class="btn-edit">Edit</a>
+
+                <form method="POST" action="{% url 'delete_appointment_request' req.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button class="btn-delete" onclick="return confirm('Delete this request?');">Delete</button>
+                </form>
+              {% else %}
+                <span class="text-muted">N/A</span>
+              {% endif %}
+            </td>
+          </tr>
+
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-muted" style="padding: 0.6rem;">No appointment requests found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="center">
+      <a href="{% url 'donor_dashboard' %}" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

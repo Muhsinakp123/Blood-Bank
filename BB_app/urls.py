@@ -56,6 +56,13 @@ urlpatterns = [
     path('donor/appoinment/', views.donor_appoinment, name='donor_appoinment'),
     path('donor/donation_history/', views.donation_history, name='donation_history'),
     path('donor/camp/', views.donor_camp, name='donor_camp'),
+    path('donor/track_requests/', views.track_donor_requests, name='track_donor_requests'),
+    path('edit_appointment/<int:id>/', views.edit_appointment_request, name='edit_appointment'),
+    path('donor/delete_request/<int:id>/', views.delete_appointment_request, name='delete_appointment_request'),
+
+
+
+
     
     
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from .models import PatientBloodRequest, Profile
 from .models import BloodStock, BloodRequest
 from .models import Contact
-from .models import DonorProfile, PatientProfile, HospitalProfile
+from .models import DonorProfile, PatientProfile, HospitalProfile,DonorAppointmentRequest
 from .models import BloodDonationCamp
 
 
@@ -242,3 +242,9 @@ class DonorAppointmentRequestForm(forms.Form):
 class DonationDateForm(forms.Form):
     donation_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     donation_time = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
+    
+class EditDonorAppointmentForm(forms.ModelForm):
+    class Meta:
+        model = DonorAppointmentRequest
+        fields = ['responses']   # edit only the questionnaire
+    

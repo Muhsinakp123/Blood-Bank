@@ -86,10 +86,17 @@
       <p>Answer quick health questions and submit a donation request.</p>
     </a>
 
+    <a href="{% url 'track_donor_requests' %}" class="hosp-card">
+  <i class="fas fa-tasks"></i>
+  <h4>Track Requests</h4>
+  <p>View your previous appointment requests and their status.</p>
+</a>
+
+
     <a href="{% url 'donation_history' %}" class="hosp-card">
       <i class="fas fa-book"></i>
       <h4>Donation History</h4>
-      <p>View your past donations.</p>
+      <p>View your Completed Past donations.</p>
     </a>
 
     <a href="{% url 'donor_camp' %}" class="hosp-card">

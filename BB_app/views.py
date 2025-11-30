@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from .models import HospitalProfile, BloodStock, BloodRequest,BloodDonation,Notification
 from .forms import BloodStockForm, BloodRequestForm,HospitalBloodRequestForm 
 from .models import DonorAppointmentRequest
-from .forms import DonorAppointmentRequestForm
+from .forms import DonorAppointmentRequestForm,EditDonorAppointmentForm
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Sum
 from django.db import models
@@ -1369,6 +1369,49 @@ def donor_reschedule_request(request, id):
         messages.warning(request, "Your reschedule request has been sent.")
     return redirect('donor_dashboard')
 
+@login_required
+def track_donor_requests(request):
+    requests_list = DonorAppointmentRequest.objects.filter(
+        donor=request.user
+    ).order_by('-submitted_on')
+
+    return render(request, 'track_donor_requests.html', {
+        "requests_list": requests_list
+    })
+
+
+@login_required
+def edit_appointment_request(request, id):
+    req = get_object_or_404(DonorAppointmentRequest, id=id, donor=request.user)
+
+    # Load saved responses
+    saved_data = req.responses or {}
+
+    if request.method == "POST":
+        form = DonorAppointmentRequestForm(request.POST)
+        if form.is_valid():
+            # Save updated responses into JSONField
+            req.responses = form.cleaned_data
+            req.save()
+            messages.success(request, "Appointment request updated successfully.")
+            return redirect("track_donor_requests")
+    else:
+        # Pre-fill entire form with saved JSON
+        form = DonorAppointmentRequestForm(initial=saved_data)
+
+    return render(request, "edit_appointment_request.html", {"form": form})
+
+
+@login_required
+def delete_appointment_request(request, id):
+    req = get_object_or_404(DonorAppointmentRequest, id=id, donor=request.user)
+
+    if request.method == "POST":
+        req.delete()
+        messages.success(request, "Appointment request deleted.")
+        return redirect("track_donor_requests")
+
+    return redirect("track_donor_requests")
 
 
 @login_required
