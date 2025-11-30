@@ -12,7 +12,7 @@ from .forms import DonorAppointmentRequestForm
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Sum
 from django.db import models
-from datetime import date,timedelta
+from datetime import date,datetime,timedelta
 from django.utils import timezone
 import io
 import base64
@@ -440,8 +440,41 @@ def update_camp(request, id):
 def donor_dashboard(request):
     donor = DonorProfile.objects.get(user=request.user)
     notifications = Notification.objects.filter(role='donor').order_by('-created_at')[:5]
-    return render(request, 'donor_dashboard.html', {'donor': donor, 'notifications': notifications})
 
+    # Latest appointment request of the USER (not donor profile)
+    last_request = DonorAppointmentRequest.objects.filter(
+        donor=request.user
+    ).order_by('-id').first()
+
+    donor_status = "allowed"
+
+    if last_request:
+
+        if last_request.status == "Pending":
+            donor_status = "pending"
+
+        elif last_request.status == "Date Sent":
+            donor_status = "sent"
+
+        elif last_request.status == "Accepted":
+            donor_status = "accepted"
+
+        elif last_request.status == "Rejected":
+            donor_status = "allowed"  # can apply again
+
+        elif last_request.status == "Donated":
+            if last_request.donation_date:
+                next_allowed = last_request.donation_date + timedelta(days=90)
+                if datetime.today().date() < next_allowed:
+                    donor_status = "wait_3_months"
+                else:
+                    donor_status = "allowed"
+
+    return render(request, 'donor_dashboard.html', {
+        'donor': donor,
+        'notifications': notifications,
+        'donor_status': donor_status,
+    })
 
 @login_required
 def donor_profile(request):
@@ -478,13 +511,36 @@ def donor_profile_delete(request, donor_id):
 
 @login_required
 def donor_appoinment(request):
+    donor = request.user
+
+    # Get the most recent appointment request
+    last_req = DonorAppointmentRequest.objects.filter(donor=donor).order_by('-submitted_on').first()
+
+    if last_req:
+
+        # ❌ Rule 1: Already requested & awaiting admin action
+        if last_req.status in ['Pending', 'Date Sent', 'Accepted']:
+            messages.error(request, "⛔ You already have an active appointment request. Please wait for admin response.")
+            return redirect('donor_dashboard')
+
+        # ❌ Rule 2: Donated but 3 months not completed
+        if last_req.status == "Donated" and last_req.donation_date:
+            next_eligible_date = last_req.donation_date + timedelta(days=90)
+            today = timezone.now().date()
+
+            if today < next_eligible_date:
+                messages.error(request, f"⛔ You can request again only after {next_eligible_date}.")
+                return redirect('donor_dashboard')
+
+        # ✔ Rule 3: Rejected → allowed (nothing to block)
+
+    # ---- Normal form process ----
     if request.method == 'POST':
         form = DonorAppointmentRequestForm(request.POST)
         if form.is_valid():
-            # Save all answers into the database
             responses = form.cleaned_data
             DonorAppointmentRequest.objects.create(
-                donor=request.user,
+                donor=donor,
                 responses=responses,
                 status='Pending'
             )
@@ -1340,110 +1396,4 @@ def auto_update_donations():
     ).update(status='Donated')
 
 
-# @login_required
-# def approve_request(request, id):
-#     today = timezone.now().date()
-
-#     hospital_request = BloodRequest.objects.filter(id=id).first()
-#     patient_request = PatientBloodRequest.objects.filter(id=id).first()
-
-#     # ---------------- HOSPITAL --------------------
-#     if hospital_request:
-#         r = hospital_request
-#         r.status = 'Approved'
-#         r.save()
-
-#         # decrease stock
-#         update_blood_stock(
-#             blood_group=r.blood_group,
-#             amount=r.units_requested,   # <-- FIXED HERE
-#             increase=False
-#         )
-
-#         Notification.objects.create(
-#             recipient=r.hospital.user,
-#             role='hospital',
-#             title="Blood Request Approved",
-#             message=f"Your {r.blood_group} request has been approved."
-#         )
-
-#         messages.success(request, "Hospital request approved.")
-#         return redirect("manage_request")
-
-#     # ---------------- PATIENT ---------------------
-#     if patient_request:
-#         r = patient_request
-#         r.status = 'Approved'
-#         r.save()
-
-#         patient_bg = r.patient.blood_group   # <-- FIXED HERE
-
-#         update_blood_stock(
-#             blood_group=patient_bg,
-#             amount=r.units_Requested,   # <-- FIXED HERE
-#             increase=False
-#         )
-
-#         Notification.objects.create(
-#             recipient=r.patient.user,
-#             role='patient',
-#             title="Blood Request Approved",
-#             message=f"Your {patient_bg} request has been approved."
-#         )
-
-#         messages.success(request, "Patient request approved.")
-#         return redirect("manage_request")
-
-#     messages.error(request, "Request not found.")
-#     return redirect("manage_request")
-
-
-# def update_blood_stock(blood_group, amount, increase=True):
-
-#     if amount is None:
-#         return
-
-#     # get first stock entry only (avoid multiple objects returned)
-#     stock = BloodStock.objects.filter(blood_group=blood_group).first()
-
-#     # if no stock exists, create ONE entry
-#     if not stock:
-#         stock = BloodStock.objects.create(
-#             blood_group=blood_group,
-#             units_available=0
-#         )
-
-#     # update units
-#     if increase:
-#         stock.units_available += amount
-#     else:
-#         stock.units_available = max(0, stock.units_available - amount)
-
-#     stock.save()
-
-
-
-# def auto_update_donations():
-#     today = date.today()
-
-#     donors = DonorAppointmentRequest.objects.filter(
-#         donation_date__lte=today,   # include today's donation
-#         status='Accepted'           # ← YOUR REAL STATUS
-#     )
-
-#     for d in donors:
-#         bg = d.donor.donorprofile.blood_group
-
-#         stock = BloodStock.objects.filter(blood_group=bg).first()
-#         if not stock:
-#             stock = BloodStock.objects.create(
-#                 blood_group=bg,
-#                 units_available=0
-#             )
-
-#         stock.units_available += 1
-#         stock.save()
-
-#         d.status = 'Completed'   # mark as donated
-#         d.save()
 

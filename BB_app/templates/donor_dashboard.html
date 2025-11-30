@@ -3,9 +3,38 @@
 {% block title %}Donor Dashboard{% endblock %}
 {% block content %}
 
+<style>
+  /* Simple red alert styling */
+  .alert-box {
+      background-color: #ffdddd;
+      color: #b30000;
+      padding: 10px 15px;
+      border-left: 4px solid #b30000;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      margin-top: 20px;
+      display: none;
+      font-size: 15px;
+  }
+
+  /* Fade-out transition */
+  .fade-out {
+      opacity: 0;
+      transition: opacity 1s ease-out;
+  }
+
+  /* Disable card click */
+  .disabled-card {
+      pointer-events: none;
+      opacity: 0.5;
+  }
+</style>
+
+
 <div class="hospital-dashboard">
 
-  <!-- Header with Welcome + Notification + Profile -->
+
+  <!-- Header -->
   <div class="dashboard-header">
     <div class="welcome-text">
       <h2>Welcome, {{ request.user.username|title }}</h2>
@@ -13,7 +42,7 @@
     </div>
 
     <div class="header-right">
-      <!-- Notification Bell with Count -->
+      <!-- Notification Bell -->
       <div class="position-relative me-3">
         <a href="{% url 'notifications' %}" class="text-decoration-none text-danger">
           <i class="fa fa-bell fa-lg"></i>
@@ -44,11 +73,14 @@
       </div>
     </div>
   </div>
+     <!-- Alert Message -->
+  <div id="msgAlert" class="alert-box"></div>
 
-  <!-- Dashboard Action Cards -->
+  <!-- Dashboard Cards -->
   <div class="hospital-cards">
 
-    <a href="{% url 'donor_appoinment' %}" class="hosp-card">
+    <!-- Appointment Card with JS protection -->
+    <a href="#" onclick="checkStatus(event)" class="hosp-card" id="appointmentCard">
       <i class="fas fa-calendar-check"></i>
       <h4>Appointment Request</h4>
       <p>Answer quick health questions and submit a donation request.</p>
@@ -57,28 +89,61 @@
     <a href="{% url 'donation_history' %}" class="hosp-card">
       <i class="fas fa-book"></i>
       <h4>Donation History</h4>
-      <p>View a complete record of your past donations.</p>
+      <p>View your past donations.</p>
     </a>
 
     <a href="{% url 'donor_camp' %}" class="hosp-card">
       <i class="fas fa-hand-holding-heart"></i>
       <h4>Camps</h4>
-      <p>See upcoming and nearby camps are arranged by Hospitals.</p>
+      <p>See upcoming nearby donation camps.</p>
     </a>
 
   </div>
 
 </div>
 
-<!-- JS Section -->
+<!-- JS -->
 <script>
-  // Profile dropdown toggle
+  const donorStatus = "{{ donor_status }}";  
+  // donor_status passed from view: "allowed", "pending", "sent", "accepted", "wait_3_months"
+
+  const msgBox = document.getElementById("msgAlert");
+
+  function showMessage(message) {
+      msgBox.innerText = message;
+      msgBox.style.display = "block";
+
+      // Auto-hide after 3 seconds
+      setTimeout(() => {
+          msgBox.classList.add("fade-out");
+          setTimeout(() => {
+              msgBox.style.display = "none";
+              msgBox.classList.remove("fade-out");
+          }, 1000);
+      }, 3000);
+  }
+
+  function checkStatus(event) {
+      if (donorStatus === "allowed") {
+          window.location.href = "{% url 'donor_appoinment' %}";
+      } else if (donorStatus === "pending") {
+          showMessage("You already have a pending appointment request.");
+      } else if (donorStatus === "sent") {
+          showMessage("You have a request waiting for admin review.");
+      } else if (donorStatus === "accepted") {
+          showMessage("Your last donation request was accepted. Please complete the process.");
+      } else if (donorStatus === "wait_3_months") {
+          showMessage("You have already donated. You can request again after 3 months.");
+      }
+      event.preventDefault();
+  }
+
+  // Profile dropdown
   function toggleDropdown() {
     const dropdown = document.getElementById("dropdownMenu");
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
   }
 
-  // Hide dropdown when clicking outside
   document.addEventListener("click", function (event) {
     const dropdown = document.getElementById("dropdownMenu");
     const logo = document.getElementById("logoDropdown");
@@ -87,7 +152,6 @@
     }
   });
 
-  // Logout confirmation
   function confirmLogout(event) {
     event.preventDefault();
     if (confirm("Are you sure you want to logout?")) {
@@ -95,6 +159,5 @@
     }
   }
 </script>
-
 
 {% endblock %}
