@@ -6,7 +6,7 @@ from .forms import BloodDonationCampForm, DonationDateForm, LoginForm, PatientBl
 from .models import BloodDonationCamp, PatientBloodRequest, Profile
 from django.contrib.auth.models import User
 from .models import HospitalProfile, BloodStock, BloodRequest,BloodDonation,Notification
-from .forms import BloodStockForm, BloodRequestForm
+from .forms import BloodStockForm, BloodRequestForm,HospitalBloodRequestForm 
 from .models import DonorAppointmentRequest
 from .forms import DonorAppointmentRequestForm
 from django.contrib.auth.decorators import user_passes_test
@@ -735,6 +735,42 @@ def edit_patient_request(request, request_id):
         form = PatientBloodRequestForm(instance=blood_request)
     
     return render(request, 'edit_patient_request.html', {'form': form})
+
+@login_required
+def edit_hospital_request(request, request_id):
+    blood_request = get_object_or_404(BloodRequest, id=request_id, hospital=request.user.hospitalprofile)
+
+    if blood_request.status != 'Pending':
+        messages.warning(request, "You can only edit requests that are pending.")
+        return redirect('view_request')
+
+    if request.method == 'POST':
+        form = HospitalBloodRequestForm(request.POST, instance=blood_request)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Hospital blood request updated successfully.")
+            return redirect('view_request')
+    else:
+        form = HospitalBloodRequestForm(instance=blood_request)
+
+    return render(request, 'edit_hospital_request.html', {'form': form, 'blood_request': blood_request})
+
+    
+
+@login_required
+def delete_hospital_request(request, request_id):
+    blood_request = get_object_or_404(BloodRequest, id=request_id, hospital=request.user.hospitalprofile)
+
+    if blood_request.status != 'Pending':
+        messages.warning(request, "You can only delete requests that are pending.")
+        return redirect('view_request')
+
+    if request.method == 'POST':
+        blood_request.delete()
+        messages.success(request, "Hospital blood request deleted successfully.")
+        return redirect('view_request')
+
+    return redirect('view_request')
 
 
 # Delete Patient Blood Request

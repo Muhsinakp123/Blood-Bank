@@ -1,0 +1,36 @@
+{% extends "master.html" %}
+{% block title %}Edit Hospital Blood Request{% endblock %}
+
+{% block content %}
+<div class="appointment-form">
+  <div class="form-card">
+    <div class="form-header text-center mb-4">
+      <h2>Edit Blood Request</h2>
+      <p>Update the details of your pending blood request.</p>
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        {{ form.blood_group.label_tag }} 
+        {{ form.blood_group }}
+      </div>
+      <div class="mb-3">
+        {{ form.units_requested.label_tag }} 
+        {{ form.units_requested }}
+      </div>
+      <div class="mb-3">
+        {{ form.date_required.label_tag }} 
+        {{ form.date_required }}
+      </div>
+      <div class="form-check mb-3">
+        {{ form.is_emergency }} 
+        {{ form.is_emergency.label_tag }}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Update Request</button>
+      <a href="{% url 'view_request' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

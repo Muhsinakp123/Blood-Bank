@@ -6,7 +6,8 @@
   <div class="form-card shadow-lg p-5">
     <div class="form-header text-center mb-4">
       <h2 class="fw-bold text-danger">🩸 Blood Donation Eligibility Form</h2>
-      <p class="text-muted">Please answer the following questions honestly to ensure safe and healthy blood donation.</p>
+      <p class="text-muted">Please answer the following questions honestly to ensure safe and healthy blood donation.
+      </p>
     </div>
     <hr>
 
@@ -16,7 +17,14 @@
       <!-- Render form fields -->
       <div class="form-fields">
         {{ form.as_p }}
+        {% if form.errors %}
+        <div class="alert"
+          style="color: red; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; margin-top: 10px;">
+          {{ form.errors }}
+        </div>
+        {% endif %}
       </div>
+
 
       <!-- Buttons -->
       <div class="button-row mt-4">
@@ -26,4 +34,5 @@
     </form>
   </div>
 </div>
+
 {% endblock %}

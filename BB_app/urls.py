@@ -28,6 +28,8 @@ urlpatterns = [
     path('camp/update/<int:id>/', views.update_camp, name='update_camp'),
     path('camp/delete/<int:camp_id>/', views.delete_camp, name='delete_camp'),
     path('mark_notification/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
+    path('hospital_request_edit/<int:request_id>/', views.edit_hospital_request, name='edit_hospital_request'),
+    path('hospital_request_delete/<int:request_id>/', views.delete_hospital_request, name='delete_hospital_request'),
 
     
     

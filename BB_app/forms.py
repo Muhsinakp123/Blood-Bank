@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from datetime import datetime, timedelta
 from .models import PatientBloodRequest, Profile
 from .models import BloodStock, BloodRequest
 from .models import Contact
@@ -178,6 +180,16 @@ class PatientBloodRequestForm(forms.ModelForm):
         fields = ['units_Requested', 'hospital_Name','date_Required', 'is_Emergency']
         widgets = {'date_Required': forms.DateInput(attrs={'type':'date'})}
 
+class HospitalBloodRequestForm(forms.ModelForm):
+    class Meta:
+        model = BloodRequest
+        fields = ['blood_group', 'units_requested', 'date_required', 'is_emergency']
+        widgets = {
+            'blood_group': forms.Select(attrs={'class': 'form-select'}),
+            'units_requested': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'date_required': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'is_emergency': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 class BloodDonationCampForm(forms.ModelForm):
     class Meta:
@@ -191,7 +203,10 @@ class BloodDonationCampForm(forms.ModelForm):
 
 # ------------------ Donor Appointment Request Form ------------------
 class DonorAppointmentRequestForm(forms.Form):
-    q1 = forms.CharField(label="Have you donated blood before? If yes, when was your last donation?", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Type date or say No'}))
+    q1 = forms.CharField(
+        label="Have you donated blood before? If yes, when was your last donation?",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Type date (YYYY-MM-DD) or No'})
+    )
     q2 = forms.ChoiceField(label="Are you currently taking any medications?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
     q3 = forms.ChoiceField(label="Have you had any major surgeries recently?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
     q4 = forms.ChoiceField(label="Do you have any chronic diseases (like diabetes, hypertension, or heart problems)?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
@@ -204,6 +219,25 @@ class DonorAppointmentRequestForm(forms.Form):
     q11 = forms.ChoiceField(label="Have you had any tattoos, piercings, or acupuncture in the past 6–12 months?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
     q12 = forms.ChoiceField(label="Have you had any recent illnesses, fever, or infections?", choices=[('Yes', 'Yes'), ('No', 'No')], widget=forms.RadioSelect)
     q13 = forms.ChoiceField(label="Are you currently pregnant, breastfeeding, or menstruating? (for female donors)", choices=[('Yes', 'Yes'), ('No', 'No'), ('Not Applicable', 'Not Applicable')], widget=forms.RadioSelect)
+
+    def clean_q1(self):
+        last_donation = self.cleaned_data['q1'].strip()
+
+        if last_donation.lower() == 'no':
+            return last_donation  # no previous donation, valid
+
+        try:
+            last_donation_date = datetime.strptime(last_donation, '%Y-%m-%d').date()
+        except ValueError:
+            raise ValidationError("Please enter a valid date in YYYY-MM-DD format or 'No'.")
+
+        today = datetime.today().date()
+        three_months_ago = today - timedelta(days=90)
+
+        if last_donation_date > three_months_ago:
+            raise ValidationError("You can only request after 3 months from your last donation.")
+
+        return last_donation
 
 class DonationDateForm(forms.Form):
     donation_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
