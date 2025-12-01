@@ -28,7 +28,17 @@ SECRET_KEY = 'django-insecure-fswnn#ww#i6vx@51)dmv$7a#c7k2j-clw!niw^gtcxim=u7i1d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# RENDER DEPLOYING CODE START//
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME :
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME,'localhost','127.0.0.1']
+else :
+    ALLOWED_HOSTS = ['localhost','127.0.0.1'] 
+    
+# RENDER DEPLOYING CODE END//       
+
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -51,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # RENDER DEPLOYING CODE 
 ]
 
 ROOT_URLCONF = 'BB.urls'
@@ -119,7 +130,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR/'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static'] # RENDER DEPLOYING CODE 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # RENDER DEPLOYING CODE 
 
 
 

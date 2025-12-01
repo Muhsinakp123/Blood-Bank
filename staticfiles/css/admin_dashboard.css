@@ -1,0 +1,656 @@
+/* -------------------------------
+   General Styles
+--------------------------------*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+/* Container */
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* -------------------------------
+   Admin Layout
+--------------------------------*/
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, #b30000, #990000);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  padding-top: 25px;
+}
+
+.sidebar h3 {
+  text-align: center;
+  color: #fff;
+  font-size: x-large;
+  margin-bottom: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  transition: all 0.3s;
+  border-radius: 6px;
+  margin: 5px 10px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background-color: #fff;
+  color: #b30000;
+}
+
+.sidebar i {
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+/* -------------------------------
+   Main Content Area
+--------------------------------*/
+.main-content {
+  margin-left: 250px;
+  padding: 30px;
+  width: calc(100% - 250px);
+}
+
+/* Header */
+.dashboard-header {
+  background: linear-gradient(90deg, #b30000, #cc0000);
+  color: #fff;
+  padding: 18px 30px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.dashboard-header i {
+  font-size: 28px;
+}
+
+/* Welcome Box */
+.welcome-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px 25px;
+  margin-top: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.username {
+  color: #b30000;
+  font-weight: 600;
+}
+
+/* -------------------------------
+   Dashboard Cards
+--------------------------------*/
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  margin-top: 40px;
+}
+
+.stat-card {
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  text-align: center;
+  padding: 25px 10px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(179, 0, 0, 0.25);
+}
+
+.stat-icon {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  color: #b30000;
+}
+
+.stat-card h6 {
+  font-weight: 700;
+  color: #444;
+}
+
+.stat-card h4 {
+  font-weight: 700;
+  color: #000;
+  font-size: 1.4rem;
+}
+
+/* -------------------------------
+   Footer
+--------------------------------*/
+.admin_footer p {
+  text-align: center;
+  background-color: #b30000;
+  color: white;
+  padding: 12px 0;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+/* Ensure footer stays at bottom on all admin pages */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* ensures full-page height */
+}
+
+.main-content > .dashboard-header,
+.main-content > .welcome-box,
+.main-content > .stats-container {
+  flex-shrink: 0;
+}
+
+.main-content > footer.admin_footer {
+  margin-top: auto; /* pushes footer to bottom */
+}
+
+
+/* -------------------------------
+   Responsive Design
+--------------------------------*/
+@media (max-width: 992px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================================
+   Admin Hospital Stock Styling
+================================ */
+.hospital-stock-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  margin-top: 30px;
+  box-shadow: 0 4px 15px rgba(179, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  margin-bottom: 25px;
+}
+
+.hospital-stock-card:hover {
+  transform: translateY(-3px);
+}
+
+.stock-title {
+  color: #b30000;
+  font-weight: 700;
+  margin-bottom: 25px;
+  border-left: 5px solid #b30000;
+  padding-left: 12px;
+  font-size: 1.4rem;
+}
+
+/* Table Styling (Aligned Columns) */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* 🔹 Makes all columns align perfectly */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.custom-table thead {
+  background: linear-gradient(90deg, #b30000, #cc0000);
+  color: white;
+  font-weight: 600;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 14px 16px;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  text-align: center;
+  word-wrap: break-word; /* prevents overflow */
+}
+
+/* 🔹 Column widths for perfect alignment */
+.custom-table th:nth-child(1),
+.custom-table td:nth-child(1) {
+  width: 30%;
+  text-align: center;
+}
+
+.custom-table th:nth-child(2),
+.custom-table td:nth-child(2) {
+  width: 35%;
+  text-align: center;
+}
+
+.custom-table th:nth-child(3),
+.custom-table td:nth-child(3) {
+  width: 20%;
+}
+
+.custom-table th:nth-child(4),
+.custom-table td:nth-child(4) {
+  width: 15%;
+}
+
+/* Alternate and hover rows */
+.custom-table tbody tr:nth-child(even) {
+  background-color: #fdf5f5;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #fff3f3;
+  transition: 0.3s ease;
+}
+
+
+/* Show Button */
+.show-btn {
+  display: inline-block;
+  background: linear-gradient(90deg, #b30000, #cc0000);
+  color: #fff !important;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.show-btn:hover {
+  background: #a00000;
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .stock-title {
+    font-size: 1.2rem;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    padding: 10px 8px;
+    font-size: 0.9rem;
+  }
+}
+
+
+/* ================================
+   Header Icons Layout
+================================ */
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+/* 🔔 Notification Icon */
+.notification-icon {
+  position: relative;
+  cursor: pointer;
+  color: #fff;
+  font-size: 24px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.notification-icon:hover {
+  transform: scale(1.1);
+  color: #ffeaea;
+}
+
+/* Red Badge for Notification Count */
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background-color: #ff4d4d;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 50%;
+  padding: 2px 5px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* 👤 Profile Dropdown (already exists) */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.profile-dropdown i {
+  font-size: 28px;
+  color: #fff;
+  transition: transform 0.3s ease;
+}
+
+.profile-dropdown:hover i {
+  transform: scale(1.1);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background-color: #fff;
+  min-width: 220px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  text-align: left;
+  padding: 15px;
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+.profile-dropdown:hover .dropdown-content {
+  display: block;
+}
+/* Dropdown text styles */
+.dropdown-content p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.dropdown-content .email {
+  color: #666;
+  font-size: 13px;
+}
+
+/* ==========================
+   Notifications Page
+========================== */
+.notification-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 25px;
+}
+
+.notification-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-left: 6px solid #b30000;
+  transition: all 0.3s ease;
+}
+
+.notification-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(179, 0, 0, 0.2);
+}
+
+.notification-card.emergency {
+  border-left: 6px solid #ff1a1a;
+  background: #fff0f0;
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notif-header h5 {
+  color: #b30000;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.notif-date {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.notification-card p {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.hospital-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 50px;
+  justify-items: center;
+  align-items: center;
+}
+
+.hosp-card {
+  background: #fff;
+  border: 2px solid #b30000;
+  border-radius: 15px;
+  padding: 25px 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #b30000;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  width: 90%;
+  max-width: 350px;
+}
+
+.hosp-card:hover {
+  background: #b30000;
+  color: #fff;
+  transform: translateY(-5px);
+}
+
+.hosp-card i {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.hosp-card h4 {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.hosp-card p {
+  font-size: 14px;
+  margin: 0;
+}
+
+
+/* ==============================
+   Requests Table Styling
+============================== */
+
+.requests-card {
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(179, 0, 0, 0.15);
+  padding: 25px;
+  animation: fadeInUp 0.4s ease;
+  margin-top: 15px;
+}
+
+.requests-card .table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.requests-card thead {
+  background: linear-gradient(90deg, #b30000, #cc0000);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.requests-card th,
+.requests-card td {
+  padding: 14px 16px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.requests-card tbody tr:nth-child(even) {
+  background-color: #fdf5f5;
+}
+
+.requests-card tbody tr:hover {
+  background-color: #fff3f3;
+  transition: 0.3s ease;
+}
+
+/* Status Badges */
+.badge {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Buttons inside table */
+.table .btn {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 5px 12px;
+  transition: all 0.3s ease;
+}
+
+.table .btn-success {
+  background: linear-gradient(90deg, #28a745, #218838);
+  border: none;
+}
+
+.table .btn-success:hover {
+  background: #1e7e34;
+  transform: translateY(-2px);
+}
+
+.table .btn-danger {
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  border: none;
+}
+
+.table .btn-danger:hover {
+  background: #a71d2a;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .requests-card {
+    padding: 15px;
+  }
+
+  .requests-card th,
+  .requests-card td {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .table .btn {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+}
+
+.ddt {
+  text-align: right;
+}
+.ddt_ul {
+  list-style: none;
+}
+
+.text-muted {
+  font-size: 17px;
+  color: gray;
+  margin-left: 5px;
+}

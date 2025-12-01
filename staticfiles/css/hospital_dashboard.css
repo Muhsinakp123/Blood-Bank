@@ -1,0 +1,1328 @@
+.hospital-dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px 50px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
+  width: 120%;
+  margin-left: -10%;
+  border-top: 4px solid #b30000;
+}
+
+.custom-dropdown {
+  position: absolute;
+  left: 20px;
+  display: none;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  min-width: 160px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  padding: 10px 0;
+  z-index: 100;
+}
+
+
+.welcome-text h2 {
+  color: #b30000;
+  font-weight: 600;
+  margin: 0;
+}
+
+.welcome-text p {
+  color: #555;
+  margin: 5px 0 0;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.hospital-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #b30000;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.hospital-logo:hover {
+  transform: scale(1.05);
+}
+
+
+.custom-dropdown li {
+  list-style: none;
+}
+
+.custom-dropdown a {
+  display: block;
+  padding: 10px 20px;
+  color: #b30000;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.custom-dropdown a:hover {
+  background-color: #b30000;
+  color: #fff;
+}
+
+.custom-dropdown hr {
+  margin: 5px 0;
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+
+
+/* Card Section - 2x2 Grid */
+.hospital-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 50px;
+  justify-items: center;
+  align-items: center;
+}
+
+.hosp-card {
+  background: #fff;
+  border: 2px solid #b30000;
+  border-radius: 15px;
+  padding: 25px 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #b30000;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  width: 90%;
+  max-width: 350px;
+}
+
+.hosp-card:hover {
+  background: #b30000;
+  color: #fff;
+  transform: translateY(-5px);
+}
+
+.hosp-card i {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.hosp-card h4 {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.hosp-card p {
+  font-size: 14px;
+  margin: 0;
+}
+
+
+/* Notification Module */
+.notification-module {
+  margin-top: 60px;
+  background: #fff;
+  border: 2px solid #b30000;
+  border-radius: 15px;
+  padding: 30px 40px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  text-align: left;
+}
+
+.notification-module h3 {
+  color: #b30000;
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-module p {
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notification-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #fff3f3;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  transition: background 0.3s;
+}
+
+.notification-item.unread {
+  background: #ffe0e0;
+}
+
+.notification-item:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.notification-item:hover p,
+.notification-item:hover h4,
+.notification-item:hover small {
+  color: white;
+}
+
+.report-dashboard {
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin: 40px auto;
+  max-width: 1000px;
+}
+
+.report-dashboard h2 {
+  color: #b30000;
+  margin-bottom: 10px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.report-table th, .report-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.report-table th {
+  background: #b30000;
+  color: #fff;
+}
+
+.report-table tr:hover {
+  background: #f9f9f9;
+}
+
+.camp-dashboard {
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin: 40px auto;
+  max-width: 1000px;
+}
+
+.camp-dashboard h2 {
+  color: #b30000;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.camp-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.feature {
+  background: #fff;
+  border: 2px solid #b30000;
+  border-radius: 15px;
+  padding: 25px 20px;
+  text-align: center;
+  color: #b30000;
+  transition: all 0.3s ease;
+}
+
+.feature:hover {
+  background: #b30000;
+  color: #fff;
+  transform: translateY(-5px);
+}
+
+/* Back Button Styling */
+.back-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #b30000;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 12px;
+}
+
+.back-btn:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+.back-btn i {
+  font-size: 14px;
+}
+
+
+/* ======================================
+   HOSPITAL PROFILE PAGE 
+====================================== */
+.hospital-profile {
+  min-height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 20px;
+  animation: fadeIn 1s ease-in;
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(14px);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(180, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+  transition: all 0.3s ease;
+  border-top: 5px solid #b30000;
+  margin: 0 auto;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.profile-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 40px rgba(179, 0, 0, 0.25);
+}
+
+/* ---------- Header ---------- */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #b30000, #d32f2f);
+  color: white;
+  padding: 18px 25px;
+  border-radius: 14px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(179, 0, 0, 0.3);
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.7rem;
+  letter-spacing: 0.5px;
+}
+
+.profile-header .back-btn {
+  color: #fff;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.profile-header .back-btn:hover {
+  background: white;
+  color: #b30000;
+}
+
+/* ---------- Form Styling ---------- */
+.profile-form p {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.profile-form label {
+  font-weight: 600;
+  color: #7a0000;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.profile-form input,
+.profile-form select,
+.profile-form textarea {
+  padding: 12px 14px;
+  border: 1.5px solid #ffd6d6;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.profile-form input:focus,
+.profile-form select:focus,
+.profile-form textarea:focus {
+  border-color: #b30000;
+  box-shadow: 0 0 8px rgba(179, 0, 0, 0.3);
+  outline: none;
+}
+
+
+/* ---------- Buttons ---------- */
+.btn-save, .btn_delete {
+  flex: 1;
+  background: white;
+  border: 2px solid #b30000;
+  color: #b30000;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+  margin-bottom: 12px;
+}
+
+/* Hover effect for both buttons */
+.btn-save:hover, .btn_delete:hover {
+  background: #b30000;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Button Row layout */
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 20px;
+}
+
+/* Back button */
+.back-btn {
+  background-color: #b30000;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(179, 0, 0, 0.2);
+  text-align: center;
+}
+
+.back-btn:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+.center {
+  text-align: center;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .profile-card {
+    padding: 25px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+}
+
+
+.profile-form .back-btn {
+  display: block;
+  flex: 1;
+  margin: 30px auto 0 auto;  /* centers it horizontally */
+  background-color: #b30000;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(179, 0, 0, 0.2);
+  text-align: center;
+}
+
+.profile-form .back-btn:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+
+/* Hide the 'Clear' checkbox and label */
+input[type="checkbox"][name$="-clear"] {
+  display: none !important;
+}
+
+label[for$="-clear_id"] {
+  display: none !important;
+}
+/* Remove extra gap & colon from Django file input */
+.profile-form p {
+  margin-bottom: 10px;
+}
+
+.profile-form label::after {
+  content: "";
+}
+
+.profile-form br {
+  display: none;
+}
+
+/* Hide the extra colon Django adds */
+.profile-form label + br + a + br {
+  display: none;
+}
+
+/* -------------------------------
+   Hospital Stock Page
+--------------------------------*/
+.hospital-stock-page {
+  background-color: #fff5f5;
+  min-height: 100vh;
+  padding: 30px 20px 60px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.hospital-stock-container {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #b30000;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  animation: fadeInUp 0.8s ease forwards;
+  margin-top: -10px;
+}
+
+.hospital-stock-container h2 {
+  color: #b30000;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.hospital-stock-container img {
+  margin-top: -20px;
+}
+
+
+.hospital-stock-container .btn-back {
+  background-color: #b30000;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hospital-stock-container .btn-back:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+
+/* -------------------------------
+   Add Blood Stock Page
+--------------------------------*/
+.hospital-add-stock {
+  background-color: #fff5f5;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 20px;
+}
+
+.add-stock-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #b30000;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.add-stock-card h2 {
+  color: #b30000;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.add-stock-form p {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.add-stock-form label {
+  font-weight: 600;
+  color: #7a0000;
+  margin-bottom: 8px;
+}
+
+.add-stock-form input,
+.add-stock-form select,
+.add-stock-form textarea {
+  padding: 12px 14px;
+  border: 1.5px solid #ffd6d6;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.add-stock-form input:focus,
+.add-stock-form select:focus,
+.add-stock-form textarea:focus {
+  border-color: #b30000;
+  box-shadow: 0 0 8px rgba(179, 0, 0, 0.3);
+  outline: none;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn-add,
+.btn-cancel {
+  flex: 1;
+  text-align: center;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+}
+
+.btn-add {
+  background: #b30000;
+  color: white;
+  border: none;
+}
+
+.btn-add:hover {
+  background: #8c0000;
+  transform: translateY(-2px);
+}
+
+.btn-cancel {
+  background: white;
+  color: #b30000;
+  border: 2px solid #b30000;
+  margin-left: 20px;
+}
+
+.btn-cancel:hover {
+  background: #b30000;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* -----------------------------------
+   BLOOD DONATION CAMP DASHBOARD
+----------------------------------- */
+.camp-dashboard {
+  background-color: #fff5f5;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  max-width: 1100px;
+  margin: 50px auto;
+  animation: fadeIn 0.8s ease;
+}
+
+.camp-dashboard h2 {
+  color: #b30000;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.camp-actions {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.btn-create {
+  background-color: #b30000;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(179, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-create:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+/* -------- Table Styling -------- */
+.camp-table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+.camp-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.camp-table th,
+.camp-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f1b1b1;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.camp-table th {
+  background-color: #b30000;
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.camp-table tr:nth-child(even) {
+  background-color: #fff0f0;
+}
+
+.camp-table tr:hover {
+  background-color: #ffe3e3;
+  transition: 0.3s;
+}
+
+/* -------- No Camp Text -------- */
+.no-camp-text {
+  color: #777;
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 20px;
+}
+
+/* -------- Back Button -------- */
+.back-btn-container {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #b30000;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(179, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* -----------------------------------
+   CREATE BLOOD DONATION CAMP PAGE
+----------------------------------- */
+.create-camp-page {
+  background-color: #fff5f5;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 20px;
+}
+
+.create-camp-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #b30000;
+  max-width: 600px;
+  width: 100%;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.create-camp-card h2 {
+  color: #b30000;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* ---------- Form Styling ---------- */
+.create-camp-form .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.create-camp-form label {
+  font-weight: 600;
+  color: #7a0000;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.create-camp-form input,
+.create-camp-form select,
+.create-camp-form textarea {
+  padding: 12px 14px;
+  border: 1.5px solid #ffd6d6;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.create-camp-form input:focus,
+.create-camp-form select:focus,
+.create-camp-form textarea:focus {
+  border-color: #b30000;
+  box-shadow: 0 0 8px rgba(179, 0, 0, 0.3);
+  outline: none;
+}
+
+/* ---------- Button ---------- */
+.btn-submit {
+  background: #b30000;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+}
+
+.btn-submit:hover {
+  background: #8c0000;
+  transform: translateY(-2px);
+}
+
+/* ---------- Back Button ---------- */
+.back-btn-container {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #b30000;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(179, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  justify-content: center;
+}
+
+.back-btn:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+/* ---------- Animation ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* -------- Camp Actions (Edit/Delete Buttons) -------- */
+.camp-actions-cell {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-edit,
+.btn-delete {
+  flex: 1;
+  min-width: 90px;
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  box-shadow: 0 3px 6px rgba(179, 0, 0, 0.2);
+}
+
+.btn-edit {
+  background-color: #b30000;
+  color: #fff;
+  border: none;
+}
+
+.btn-edit:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  background-color: #b30000;
+  color: #fff;
+  border: none;
+}
+
+.btn-delete:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+
+
+/* -----------------------------------
+   UPDATE BLOOD DONATION CAMP PAGE
+----------------------------------- */
+.update-camp-page {
+  background-color: #fff5f5;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 20px;
+}
+
+.update-camp-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #b30000;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.update-camp-card h2 {
+  color: #b30000;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.update-camp-card .subtitle {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.update-camp-form p {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.update-camp-form label {
+  font-weight: 600;
+  color: #7a0000;
+  margin-bottom: 6px;
+}
+
+.update-camp-form input,
+.update-camp-form select,
+.update-camp-form textarea {
+  padding: 12px 14px;
+  border: 1.5px solid #ffd6d6;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.update-camp-form input:focus,
+.update-camp-form select:focus,
+.update-camp-form textarea:focus {
+  border-color: #b30000;
+  box-shadow: 0 0 8px rgba(179, 0, 0, 0.3);
+  outline: none;
+}
+
+.update-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn-update {
+  flex: 1;
+  background: #b30000;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+}
+
+.btn-update:hover {
+  background: #8c0000;
+  transform: translateY(-2px);
+}
+
+.btn-cancel {
+  flex: 1;
+  background: white;
+  color: #b30000;
+  border: 2px solid #b30000;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-decoration: none;
+  margin-left: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+}
+
+.btn-cancel:hover {
+  background: #b30000;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ===============================
+   REQUEST BLOOD PAGE STYLING
+=============================== */
+.request-blood-page {
+  background-color: #fff5f5;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 20px;
+  animation: fadeIn 0.8s ease;
+}
+
+.request-blood-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #b30000;
+  max-width: 600px;
+  width: 100%;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.request-blood-card h2 {
+  color: #b30000;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Form fields */
+.request-blood-form p {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.request-blood-form label {
+  font-weight: 600;
+  color: #7a0000;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.request-blood-form input,
+.request-blood-form select,
+.request-blood-form textarea {
+  padding: 12px 14px;
+  border: 1.5px solid #ffd6d6;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.request-blood-form input:focus,
+.request-blood-form select:focus,
+.request-blood-form textarea:focus {
+  border-color: #b30000;
+  box-shadow: 0 0 8px rgba(179, 0, 0, 0.3);
+  outline: none;
+}
+
+/* Emergency checkbox */
+.emergency-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.emergency-field label {
+  margin: 0;
+  font-weight: 600;
+  color: #b30000;
+}
+
+/* Buttons */
+.request-blood-form .button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.request-blood-form .btn-add,
+.request-blood-form .btn-cancel {
+  flex: 1;
+  text-align: center;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(179, 0, 0, 0.15);
+}
+
+.request-blood-form .btn-add {
+  background: #b30000;
+  color: white;
+  border: none;
+}
+
+.request-blood-form .btn-add:hover {
+  background: #8c0000;
+  transform: translateY(-2px);
+}
+
+.request-blood-form .btn-cancel {
+  background: white;
+  color: #b30000;
+  border: 2px solid #b30000;
+  margin-left: 20px;
+}
+
+.request-blood-form .btn-cancel:hover {
+  background: #b30000;
+  color: white;
+  transform: translateY(-2px);
+}
+
+input[type="checkbox"] {
+  max-width: 15px;
+  min-height: 15px;
+  accent-color: #c70000;
+  transform: scale(1.3);
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* ===============================
+   HOSPITAL VIEW REQUEST PAGE
+=============================== */
+.table-container {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #b30000;
+  max-width: 1000px;
+  width: 100%;
+  margin: 50px auto;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.table-container h3 {
+  color: #b30000;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #ffd6d6;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.table th {
+  background-color: #b30000;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.table tr:nth-child(even) {
+  background-color: #fff5f5;
+}
+
+.table tr:hover {
+  background-color: #ffe5e5;
+  transition: 0.3s;
+}
+
+/* Emergency row styling */
+.emergency-row {
+  background-color: #ffe0e0 !important;
+  border-left: 6px solid #b30000;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 rgba(179, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 15px rgba(179, 0, 0, 0.4); }
+  100% { box-shadow: 0 0 0 rgba(179, 0, 0, 0.3); }
+}
+
+/* Emergency label */
+.emergency-label {
+  background-color: #b30000;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-block;
+  font-size: 0.9rem;
+}
+
+/* Back button */
+.table-container .btn-secondary {
+  background-color: #b30000;
+  color: #fff;
+  border: none;
+  padding: 10px 50px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-top: 40px;
+}
+
+.table-container .btn-secondary:hover {
+  background-color: #8c0000;
+  transform: translateY(-2px);
+}
+
+/* Empty message */
+.table tbody tr td[colspan] {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
