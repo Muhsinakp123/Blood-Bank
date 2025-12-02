@@ -441,7 +441,6 @@ def donor_dashboard(request):
     donor = DonorProfile.objects.get(user=request.user)
     notifications = Notification.objects.filter(role='donor').order_by('-created_at')[:5]
 
-    # Latest appointment request of the USER (not donor profile)
     last_request = DonorAppointmentRequest.objects.filter(
         donor=request.user
     ).order_by('-id').first()
@@ -454,21 +453,24 @@ def donor_dashboard(request):
             donor_status = "pending"
 
         elif last_request.status == "Date Sent":
-            donor_status = "sent"
+            donor_status = "sent"   # ✔ FIXED (was wrongly 'accepted')
 
         elif last_request.status == "Accepted":
             donor_status = "accepted"
 
         elif last_request.status == "Rejected":
-            donor_status = "allowed"  # can apply again
-
+            donor_status = "allowed"
         elif last_request.status == "Donated":
+            donor_status = "donated"   # SHOW "Donated" IN DASHBOARD
+
+    # Check if 3 months have passed
             if last_request.donation_date:
                 next_allowed = last_request.donation_date + timedelta(days=90)
                 if datetime.today().date() < next_allowed:
                     donor_status = "wait_3_months"
                 else:
                     donor_status = "allowed"
+
 
     return render(request, 'donor_dashboard.html', {
         'donor': donor,
@@ -1243,9 +1245,20 @@ def patient_requests(request):
 
 
 @login_required 
-def donor_requests(request): 
+def donor_requests(request):
+
+    # 🔥 Auto-update donations where date already passed
+    today = timezone.now().date()
+    DonorAppointmentRequest.objects.filter(
+        status='Accepted', 
+        donation_date__lt=today
+    ).update(status='Donated')
+
+    # Load updated list
     requests = DonorAppointmentRequest.objects.select_related('donor').order_by('-submitted_on') 
+
     return render(request, 'admin_donor_requests.html', {'requests': requests})
+
 
 @login_required
 def donor_eligibility(request, id):
